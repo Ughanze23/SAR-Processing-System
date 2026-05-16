@@ -26,37 +26,72 @@ YOUR TASKS:
 
 import json
 import pandas as pd
-from datetime import datetime, timezone
+from datetime import date,datetime, timezone
 from typing import Dict, List, Optional, Any, Literal
 from pydantic import BaseModel, Field, field_validator
 import uuid
 import os
 
-# ===== TODO: IMPLEMENT PYDANTIC SCHEMAS =====
+
+
+def parse_date_field(value, field_name: str) -> str:
+    """Validates yyyy-mm-dd format and returns the string as-is."""
+    if not isinstance(value, str):
+        raise ValueError(f"{field_name} must be a string in yyyy-mm-dd format")
+    try:
+        datetime.strptime(value, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError(f"{field_name} must be in yyyy-mm-dd format (e.g. 1990-06-15)")
+    return value
 
 class CustomerData(BaseModel):
-    """Customer information schema with validation
-    
-    REQUIRED FIELDS (examine data/customers.csv):
-    - customer_id: str = Unique identifier like "CUST_0001"
-    - name: str = Full customer name like "John Smith"
-    - date_of_birth: str = Date in YYYY-MM-DD format like "1985-03-15"
-    - ssn_last_4: str = Last 4 digits like "1234"
-    - address: str = Full address like "123 Main St, City, ST 12345"
-    - customer_since: str = Date in YYYY-MM-DD format like "2010-01-15"
-    - risk_rating: Literal['Low', 'Medium', 'High'] = Risk assessment
-    
-    OPTIONAL FIELDS:
-    - phone: Optional[str] = Phone number like "555-123-4567"
-    - occupation: Optional[str] = Job title like "Software Engineer"
-    - annual_income: Optional[int] = Yearly income like 75000
-    
-    HINT: Use Field(..., description="...") for required fields
-    HINT: Use Field(None, description="...") for optional fields
-    HINT: Use Literal type for risk_rating to restrict values
-    """
-    # TODO: Implement the CustomerData schema with proper fields and validation
-    pass
+    """Customer information schema with validation"""
+
+    customer_id: str = Field(..., description="Unique identifier like 'CUST_0001'")
+    name: str = Field(..., min_length=3, max_length=100, description="Full customer name like 'John Smith'")
+    date_of_birth: str = Field(..., description="Date in YYYY-MM-DD format like '1985-03-15'")
+    ssn_last_4: str = Field(..., exclude=True,  min_length=4, max_length=4,description="Last 4 digits like '1234'")
+    address: str = Field(..., description="Full address like '123 Main St, City, ST 12345'")
+    customer_since: str = Field(..., description="Date in YYYY-MM-DD format like '2010-01-  15'")
+    risk_rating: Literal['Low', 'Medium', 'High'] = Field(..., description="Risk assessment — Low, Medium, or High")
+    phone: Optional[str] = Field(None, description="Phone number like '555-123-4567'")
+    occupation: Optional[str] = Field(None, description="Job title like 'Software Engineer'")
+    annual_income: Optional[int] = Field(None, description="Yearly income like 75000")
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        parts = v.strip().split()
+        if len(parts) < 2:
+            raise ValueError("Name must include both a first and last name")
+        return " ".join(
+            "-".join(word.capitalize() for word in part.split("-"))
+            for part in parts
+        )
+
+    @field_validator("date_of_birth")
+    @classmethod
+    def validate_dob(cls, v: str) -> str:
+        parsed = datetime.strptime(parse_date_field(v, "date_of_birth"), "%Y-%m-%d").date()
+        if parsed >= date.today():
+            raise ValueError("date_of_birth must be in the past")
+        return v
+
+    @field_validator("customer_since")
+    @classmethod
+    def validate_customer_since(cls, v: str) -> str:
+        parsed = datetime.strptime(parse_date_field(v, "customer_since"), "%Y-%m-%d").date()
+        if parsed > date.today():
+            raise ValueError("customer_since cannot be a future date")
+        return v
+
+    @field_validator("risk_rating", mode="before")
+    @classmethod
+    def normalise_risk_rating(cls, v) -> str:
+        if isinstance(v, str):
+            return v.strip().capitalize()
+        return v
+
 
 class AccountData(BaseModel):
     """Account information schema with validation
