@@ -1,28 +1,4 @@
 # Foundation SAR - Core Data Schemas and Utilities
-# TODO: Implement core Pydantic schemas and data processing utilities
-
-"""
-This module contains the foundational components for SAR processing:
-
-1. Pydantic Data Schemas:
-   - CustomerData: Customer profile information
-   - AccountData: Account details and balances  
-   - TransactionData: Individual transaction records
-   - CaseData: Unified case combining all data sources
-   - RiskAnalystOutput: Risk analysis results
-   - ComplianceOfficerOutput: Compliance narrative results
-
-2. Utility Classes:
-   - ExplainabilityLogger: Audit trail logging
-   - DataLoader: Combines fragmented data into case objects
-
-YOUR TASKS:
-- Study the data files in data/ folder
-- Design Pydantic schemas that match the CSV structure
-- Implement validation rules for financial data
-- Create a DataLoader that builds unified case objects
-- Add proper error handling and logging
-"""
 
 import json
 import pandas as pd
@@ -200,127 +176,163 @@ class ComplianceOfficerOutput(BaseModel):
     completeness_check: bool = Field(..., description="Whether narrative meets all requirements")
 
 
-# ===== TODO: IMPLEMENT AUDIT LOGGING =====
+# ===== IMPLEMENT AUDIT LOGGING =====
 
 class ExplainabilityLogger:
-    """Simple audit logging for compliance trails
-
-    ATTRIBUTES:
-    - log_file: str = Path to JSONL log file (default: "sar_audit.jsonl")
-    - entries: List = In-memory storage of log entries
-
-    METHODS:
-    - log_agent_action(): Logs agent actions with structured data
-    
-    LOG ENTRY STRUCTURE (use this exact format):
-    {
-        'timestamp': datetime.now(timezone.utc).isoformat(),
-        'case_id': case_id,
-        'agent_type': agent_type,  # "DataLoader", "RiskAnalyst", "ComplianceOfficer"
-        'action': action,          # "create_case", "analyze_case", "generate_narrative"
-        'input_summary': str(input_data),
-        'output_summary': str(output_data),
-        'reasoning': reasoning,
-        'execution_time_ms': execution_time_ms,
-        'success': success,        # True/False
-        'error_message': error_message  # None if success=True
-    }
-    
-    HINT: Write each entry as JSON + newline to create JSONL format
-    HINT: Use 'a' mode to append to log file
-    HINT: Store entries in self.entries list AND write to file
-    """
+    """Simple audit logging for compliance trails"""
     
     def __init__(self, log_file: str = "sar_audit.jsonl"):
         # TODO: Initialize with log_file path and empty entries list
-        pass
+        self.log_file = log_file
+        self.entries = []
+      
     
-    def log_agent_action(self, agent_type: str, action: str, case_id: str, 
-                        input_data: Dict, output_data: Dict, reasoning: str, 
-                        execution_time_ms: float, success: bool = True, 
+    def log_agent_action(self, 
+                         agent_type: str, 
+                         action: str, case_id: str, 
+                        input_data: Dict, 
+                        output_data: Dict, 
+                        reasoning: str, 
+                        execution_time_ms: float, 
+                        success: bool = True, 
                         error_message: Optional[str] = None):
-        """Log an agent action with essential context
-        
-        IMPLEMENTATION STEPS:
-        1. Create entry dictionary with all fields (see structure above)
-        2. Add entry to self.entries list
-        3. Write entry to log file as JSON line
-        
-        HINT: Use json.dumps(entry) + '\n' for JSONL format
-        HINT: Use datetime.now(timezone.utc).isoformat() for timestamp
-        HINT: Convert input_data and output_data to strings with str()
-        """
-        # TODO: Implement logging with structured entry creation and file writing
-        pass
+        """Log an agent action with essential context"""
+
+        entry = {
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'case_id': case_id,
+            'agent_type': agent_type,
+            'action': action,
+            'input_summary': str(input_data),
+            'output_summary': str(output_data),
+            'reasoning': reasoning,
+            'execution_time_ms': execution_time_ms,
+            'success': success,
+            'error_message': error_message
+        }
+
+        self.entries.append(entry)
+
+        with open(self.log_file, 'a') as f:
+            f.write(json.dumps(entry) + '\n')
+
 
 # ===== TODO: IMPLEMENT DATA LOADER =====
 
 class DataLoader:
-    """Simple loader that creates case objects from CSV data
-    
-    ATTRIBUTES:
-    - logger: ExplainabilityLogger = For audit logging
-    
-    HELPFUL METHODS:
-    - create_case_from_data(): Creates CaseData from input dictionaries
-    
-    IMPLEMENTATION PATTERN:
-    1. Start timing with start_time = datetime.now()
-    2. Generate case_id with str(uuid.uuid4())
-    3. Create CustomerData object from customer_data dict
-    4. Filter accounts where acc['customer_id'] == customer.customer_id
-    5. Get account_ids set from filtered accounts
-    6. Filter transactions where txn['account_id'] in account_ids
-    7. Create CaseData object with all components
-    8. Calculate execution_time_ms
-    9. Log success/failure with self.logger.log_agent_action()
-    10. Return CaseData object (or raise exception on failure)
-    """
-    
-    def __init__(self, explainability_logger: ExplainabilityLogger):
-        # TODO: Store logger for audit trail
-        pass
-    
-    def create_case_from_data(self, 
-                            customer_data: Dict,
-                            account_data: List[Dict],
-                            transaction_data: List[Dict]) -> CaseData:
-        """Create a unified case object from fragmented AML data
+    """Simple loader that creates case objects from CSV data"""
 
-        SUGGESTED STEPS:
-        1. Record start time for performance tracking
-        2. Generate unique case_id using uuid.uuid4()
-        3. Create CustomerData object from customer_data dictionary
-        4. Filter account_data list for accounts belonging to this customer
-        5. Create AccountData objects from filtered accounts
-        6. Get set of account_ids from customer's accounts
-        7. Filter transaction_data for transactions in customer's accounts
-        8. Create TransactionData objects from filtered transactions  
-        9. Create CaseData object combining all components
-        10. Add case metadata (case_id, timestamp, data_sources)
-        11. Calculate execution time in milliseconds
-        12. Log operation with success/failure status
-        13. Return CaseData object
-        
-        ERROR HANDLING:
-        - Wrap in try/except block
-        - Log failures with error message
-        - Re-raise exceptions for caller
-        
-        DATA_SOURCES FORMAT:
-        {
-            'customer_source': f"csv_extract_{datetime.now().strftime('%Y%m%d')}",
-            'account_source': f"csv_extract_{datetime.now().strftime('%Y%m%d')}",
-            'transaction_source': f"csv_extract_{datetime.now().strftime('%Y%m%d')}"
-        }
-        
-        HINT: Use list comprehensions for filtering
-        HINT: Use set comprehension for account_ids: {acc.account_id for acc in accounts}
-        HINT: Use datetime.now(timezone.utc).isoformat() for timestamps
-        HINT: Calculate execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
-        """
-        # TODO: Implement complete case creation with error handling and logging
-        pass
+    def __init__(self, explainability_logger: ExplainabilityLogger):
+        # Step from __init__: just store the logger
+        self.logger = explainability_logger
+
+    def create_case_from_data(
+        self,
+        customer_data: Dict,
+        account_data: List[Dict],
+        transaction_data: List[Dict]
+    ) -> CaseData:
+
+        # start the clock
+        start_time = datetime.now()
+
+        # Unique ID for this case
+        case_id = str(uuid.uuid4())
+
+        try:
+            #validate and create the customer object
+            customer = CustomerData.model_validate(customer_data)
+
+            # filter accounts that belong to this customer
+            customer_accounts_raw = [
+                acc for acc in account_data
+                if acc["customer_id"] == customer.customer_id
+            ]
+
+            #create AccountData objects from filtered accounts
+            accounts = [
+                AccountData.model_validate(
+                    acc,
+                    context={"valid_customer_ids": {customer.customer_id}}
+                )
+                for acc in customer_accounts_raw
+            ]
+
+            # build a set of this customer's account IDs
+            account_ids = {acc.account_id for acc in accounts}
+
+            #filter transactions that belong to those accounts
+            customer_transactions_raw = [
+                txn for txn in transaction_data
+                if txn["account_id"] in account_ids
+            ]
+
+            # TransactionData objects
+            transactions = [
+                TransactionData.model_validate(txn)
+                for txn in customer_transactions_raw
+            ]
+
+            
+            case = CaseData(
+                case_id=case_id,
+                customer=customer,
+                accounts=accounts,
+                transactions=transactions,
+                created_at=datetime.now(timezone.utc).isoformat(),
+                data_sources={
+                    "customer_source":    f"csv_extract_{datetime.now().strftime('%Y%m%d')}",
+                    "account_source":     f"csv_extract_{datetime.now().strftime('%Y%m%d')}",
+                    "transaction_source": f"csv_extract_{datetime.now().strftime('%Y%m%d')}"
+                }
+            )
+
+          
+            execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
+
+            # log success
+            self.logger.log_agent_action(
+                agent_type="DataLoader",
+                action="create_case",
+                case_id=case_id,
+                input_data={
+                    "customer_id":    customer.customer_id,
+                    "num_accounts":   len(accounts),
+                    "num_transactions": len(transactions)
+                },
+                output_data={
+                    "case_id": case_id,
+                    "status":  "created"
+                },
+                reasoning=(
+                    f"Loaded {len(accounts)} account(s) and "
+                    f"{len(transactions)} transaction(s) "
+                    f"for customer {customer.customer_id}"
+                ),
+                execution_time_ms=execution_time_ms,
+                success=True
+            )
+
+            
+            return case
+
+        except Exception as e:
+            # Log failure then re-raise so the caller knows something went wrong
+            execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
+
+            self.logger.log_agent_action(
+                agent_type="DataLoader",
+                action="create_case",
+                case_id=case_id,
+                input_data={"customer_data": customer_data},
+                output_data={},
+                reasoning="Case creation failed — see error_message",
+                execution_time_ms=execution_time_ms,
+                success=False,
+                error_message=str(e)
+            )
+
+            raise
 
 # ===== HELPER FUNCTIONS (PROVIDED) =====
 
