@@ -149,6 +149,8 @@ class CaseData(BaseModel):
         if not v:
             raise ValueError("Case must include at least one transaction")
         
+        if info.context is None:
+            return v
         accounts: List[AccountData] = info.context.get("accounts", [])
         account_ids = {acc.account_id for acc in accounts}
         
@@ -279,7 +281,7 @@ class DataLoader:
                 customer=customer,
                 accounts=accounts,
                 transactions=transactions,
-                created_at=datetime.now(timezone.utc).isoformat(),
+                case_created_at=datetime.now(timezone.utc).isoformat(),
                 data_sources={
                     "customer_source":    f"csv_extract_{datetime.now().strftime('%Y%m%d')}",
                     "account_source":     f"csv_extract_{datetime.now().strftime('%Y%m%d')}",

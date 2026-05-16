@@ -27,7 +27,7 @@ try:
             # Try to create a simple instance to see if it's properly implemented
             test_customer = CustomerData(
                 customer_id="TEST", 
-                name="Test", 
+                name="Test User", 
                 date_of_birth="1990-01-01",
                 ssn_last_4="1234",
                 address="123 Test St",
@@ -145,7 +145,7 @@ class TestTransactionData:
             "description": "ONLINE TRANSFER TO SAVINGS",
             "counterparty": "WELLS FARGO BANK",
             "location": "ONLINE",
-            "method": "ACH"
+            "method": "Electronic"
         }
         
         transaction = TransactionData(**transaction_data)
@@ -164,7 +164,7 @@ class TestTransactionData:
             transaction_type="Deposit",
             amount=100.50,
             description="Test deposit",
-            method="ACH"
+            method="Electronic"
         )
         assert transaction.amount == 100.50
 
