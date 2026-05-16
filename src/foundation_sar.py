@@ -133,27 +133,30 @@ class AccountData(BaseModel):
         return v
 
 class TransactionData(BaseModel):
-    """Transaction information schema with validation
+    """Transaction information schema with validation """
     
-    REQUIRED FIELDS (examine data/transactions.csv):
-    - transaction_id: str = Unique identifier like "TXN_B24455F3"
-    - account_id: str = Must match AccountData.account_id
-    - transaction_date: date = Date in YYYY-MM-DD format
-    - transaction_type: str = Type like "Cash_Deposit", "Wire_Transfer"
-    - amount: float = Transaction amount (negative for withdrawals)
-    - description: str = Description like "Cash deposit at branch"
-    - method: str = Method like "Wire", "ACH", "ATM", "Teller"
-    
-    OPTIONAL FIELDS:
-    - counterparty: Optional[str] = Other party in transaction
-    - location: Optional[str] = Transaction location or branch
-    
-    HINT: amount can be negative for debits/withdrawals
-    HINT: Use descriptive field descriptions for clarity
-    """
-    # TODO: Implement the TransactionData schema
-    pass
+    transaction_id: str = Field(..., description="Unique identifier like 'TXN_B24455F3'")
+    account_id: str = Field(..., description="unique account identifier like 'CUST_0001_ACC_1'")
+    transaction_date: date = Field(..., description="Date in YYYY-MM-DD format")
+    transaction_type: str = Field(..., description="Type like 'Cash_Deposit', 'Wire_Transfer'")
+    amount: float = Field(..., description="Transaction amount (negative for withdrawals)")
+    description: str = Field(..., description="Description like 'Cash deposit at branch'")
+    method: Literal['ATM', 'Electronic', 'Online', 'Branch', 'Mobile', 'Cash', 'Wire'] = Field(..., description="The Transaction method")
+    counterparty: Optional[str] = Field(None, description="Other party in transaction")
+    location: Optional[str] = Field(None, description="Transaction location or branch")
 
+    @field_validator("account_id")
+    @classmethod
+    def account_must_exist(cls, v: str, info: ValidationInfo) -> str:
+        if info.context is None:
+            return v  # no context provided — skip the check
+
+        valid_ids: set[str] = info.context.get("valid_account_ids", set())
+
+        if v not in valid_ids:
+            raise ValueError(f"account_id '{v}' does not exist in AccountData")
+        return v
+   
 class CaseData(BaseModel):
     """Unified case object combining all data sources""" 
     # TODO: Implement the CaseData schema with validation
