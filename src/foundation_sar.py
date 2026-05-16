@@ -28,7 +28,7 @@ import json
 import pandas as pd
 from datetime import date,datetime, timezone
 from typing import Dict, List, Optional, Any, Literal
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator,ValidationInfo
 import uuid
 import os
 
@@ -94,23 +94,45 @@ class CustomerData(BaseModel):
 
 
 class AccountData(BaseModel):
-    """Account information schema with validation
+    """Account information schema with validation"""
     
-    REQUIRED FIELDS (examine data/accounts.csv):
-    - account_id: str = Unique identifier like "CUST_0001_ACC_1"
-    - customer_id: str = Must match CustomerData.customer_id
-    - account_type: str = Type like "Checking", "Savings", "Money_Market"
-    - opening_date: str = Date in YYYY-MM-DD format
-    - current_balance: float = Current balance (can be negative)
-    - average_monthly_balance: float = Average balance
-    - status: str = Status like "Active", "Closed", "Suspended"
-    
-    HINT: All fields are required for account data
-    HINT: Use float for monetary amounts
-    HINT: current_balance can be negative for overdrafts
-    """
-    # TODO: Implement the AccountData schema
-    pass
+    account_id: str = Field(..., description="Unique identifier like 'CUST_0001_ACC_1'")
+    customer_id: str = Field(..., description="Must match CustomerData.customer_id")
+    account_type: Literal['Checking', 'Savings', 'Money_Market', 'Business_Checking'] = Field(..., description="Type like 'Checking', 'Savings', or 'Money_Market'")
+    opening_date: str = Field(..., description="Date in YYYY-MM-DD format like '2010-01-15'")
+    current_balance: float = Field(..., description="Current balance (can be negative for overdrafts)")
+    average_monthly_balance: float = Field(..., description="Average monthly balance")          
+    status: Literal['Active', 'Closed', 'Suspended'] = Field(..., description="Status like 'Active', 'Closed', or 'Suspended'")
+
+    @field_validator("customer_id")
+    @classmethod
+    def customer_must_exist(cls, v: str, info: ValidationInfo) -> str:
+        if info.context is None:
+            return v  # no context provided — skip the check
+
+        valid_ids: set[str] = info.context.get("valid_customer_ids", set())
+
+        if v not in valid_ids:
+            raise ValueError(f"customer_id '{v}' does not exist in CustomerData")
+        return v
+
+    @field_validator("account_type", "status", mode="before")
+    @classmethod
+    def normalise_enum_fields(cls, v) -> str:
+        """Handles case variations: 'checking' → 'Checking', 'ACTIVE' → 'Active'."""
+        if isinstance(v, str):
+            if v.strip().lower() == "money_market":
+                return "Money_Market"
+            return v.strip().capitalize()
+        return v
+
+    @field_validator("opening_date")
+    @classmethod
+    def validate_opening_date(cls, v: str) -> str:
+        parsed = datetime.strptime(parse_date_field(v, "opening_date"), "%Y-%m-%d").date()
+        if parsed > date.today():
+            raise ValueError("opening_date cannot be a future date")
+        return v
 
 class TransactionData(BaseModel):
     """Transaction information schema with validation
