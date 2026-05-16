@@ -35,7 +35,7 @@ import os
 
 """
 def parse_date_field(value, field_name: str) -> str:
-    """Validates yyyy-mm-dd format and returns the string as-is."""
+    #Validates yyyy-mm-dd format and returns the string as-is.
     if not isinstance(value, str):
         raise ValueError(f"{field_name} must be a string in yyyy-mm-dd format")
     try:
@@ -155,29 +155,29 @@ class TransactionData(BaseModel):
     pass
 
 class CaseData(BaseModel):
-    """Unified case object combining all data sources
-    
-    REQUIRED FIELDS:
-    - case_id: str = Unique case identifier (generate with uuid)
-    - customer: CustomerData = Customer information object
-    - accounts: List[AccountData] = List of customer's accounts
-    - transactions: List[TransactionData] = List of suspicious transactions
-    - case_created_at: str = ISO timestamp when case was created
-    - data_sources: Dict[str, str] = Source tracking with keys like:
-      * "customer_source": "csv_extract_20241219"
-      * "account_source": "csv_extract_20241219" 
-      * "transaction_source": "csv_extract_20241219"
-    
-    VALIDATION RULES:
-    - transactions list cannot be empty (use @field_validator)
-    - All accounts should belong to the same customer
-    - All transactions should belong to accounts in the case
-    
-    HINT: Use @field_validator('transactions') with @classmethod decorator
-    HINT: Check if not v: raise ValueError("message") for empty validation
-    """
+    """Unified case object combining all data sources""" 
     # TODO: Implement the CaseData schema with validation
-    pass
+    case_id: str = Field(..., description="Unique case identifier (generate with uuid)")
+    customer: CustomerData = Field(..., description="Customer information object")
+    accounts: List[AccountData] = Field(..., description="List of customer's accounts")
+    transactions: List[TransactionData] = Field(..., description="List of suspicious transactions")
+    case_created_at: str = Field(..., description="ISO timestamp when case was created")
+    data_sources: Dict[str, str] = Field(..., description="Source tracking with keys like: 'customer_source', 'account_source', 'transaction_source'")          
+
+    @field_validator('transactions')
+    @classmethod
+    def validate_transactions(cls, v: List[TransactionData], info: ValidationInfo) -> List[TransactionData]:
+        if not v:
+            raise ValueError("Case must include at least one transaction")
+        
+        accounts: List[AccountData] = info.context.get("accounts", [])
+        account_ids = {acc.account_id for acc in accounts}
+        
+        for txn in v:
+            if txn.account_id not in account_ids:
+                raise ValueError(f"Transaction {txn.transaction_id} references account_id '{txn.account_id}' which is not in the case accounts")
+        
+        return v
 
 class RiskAnalystOutput(BaseModel):
     """Risk Analyst agent structured output
