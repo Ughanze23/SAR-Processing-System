@@ -33,7 +33,7 @@ import uuid
 import os
 
 
-
+"""
 def parse_date_field(value, field_name: str) -> str:
     """Validates yyyy-mm-dd format and returns the string as-is."""
     if not isinstance(value, str):
@@ -43,16 +43,17 @@ def parse_date_field(value, field_name: str) -> str:
     except ValueError:
         raise ValueError(f"{field_name} must be in yyyy-mm-dd format (e.g. 1990-06-15)")
     return value
+"""
 
 class CustomerData(BaseModel):
     """Customer information schema with validation"""
 
     customer_id: str = Field(..., description="Unique identifier like 'CUST_0001'")
     name: str = Field(..., min_length=3, max_length=100, description="Full customer name like 'John Smith'")
-    date_of_birth: str = Field(..., description="Date in YYYY-MM-DD format like '1985-03-15'")
+    date_of_birth: date = Field(..., description="Date in YYYY-MM-DD format like '1985-03-15'")
     ssn_last_4: str = Field(..., exclude=True,  min_length=4, max_length=4,description="Last 4 digits like '1234'")
     address: str = Field(..., description="Full address like '123 Main St, City, ST 12345'")
-    customer_since: str = Field(..., description="Date in YYYY-MM-DD format like '2010-01-  15'")
+    customer_since: date = Field(..., description="Date in YYYY-MM-DD format like '2010-01-  15'")
     risk_rating: Literal['Low', 'Medium', 'High'] = Field(..., description="Risk assessment — Low, Medium, or High")
     phone: Optional[str] = Field(None, description="Phone number like '555-123-4567'")
     occupation: Optional[str] = Field(None, description="Job title like 'Software Engineer'")
@@ -71,18 +72,16 @@ class CustomerData(BaseModel):
 
     @field_validator("date_of_birth")
     @classmethod
-    def validate_dob(cls, v: str) -> str:
-        parsed = datetime.strptime(parse_date_field(v, "date_of_birth"), "%Y-%m-%d").date()
-        if parsed >= date.today():
+    def validate_dob(cls, v: date) -> date:
+        if v >= date.today():
             raise ValueError("date_of_birth must be in the past")
         return v
 
     @field_validator("customer_since")
     @classmethod
-    def validate_customer_since(cls, v: str) -> str:
-        parsed = datetime.strptime(parse_date_field(v, "customer_since"), "%Y-%m-%d").date()
-        if parsed > date.today():
-            raise ValueError("customer_since cannot be a future date")
+    def validate_customer_since(cls, v: date) -> date:
+        if v > date.today():
+            raise ValueError("customer_since cannot be future date")
         return v
 
     @field_validator("risk_rating", mode="before")
@@ -99,7 +98,7 @@ class AccountData(BaseModel):
     account_id: str = Field(..., description="Unique identifier like 'CUST_0001_ACC_1'")
     customer_id: str = Field(..., description="Must match CustomerData.customer_id")
     account_type: Literal['Checking', 'Savings', 'Money_Market', 'Business_Checking'] = Field(..., description="Type like 'Checking', 'Savings', or 'Money_Market'")
-    opening_date: str = Field(..., description="Date in YYYY-MM-DD format like '2010-01-15'")
+    opening_date: date = Field(..., description="Date in YYYY-MM-DD format like '2010-01-15'")
     current_balance: float = Field(..., description="Current balance (can be negative for overdrafts)")
     average_monthly_balance: float = Field(..., description="Average monthly balance")          
     status: Literal['Active', 'Closed', 'Suspended'] = Field(..., description="Status like 'Active', 'Closed', or 'Suspended'")
@@ -128,9 +127,8 @@ class AccountData(BaseModel):
 
     @field_validator("opening_date")
     @classmethod
-    def validate_opening_date(cls, v: str) -> str:
-        parsed = datetime.strptime(parse_date_field(v, "opening_date"), "%Y-%m-%d").date()
-        if parsed > date.today():
+    def validate_opening_date(cls, v: date) -> date:
+        if v > date.today():
             raise ValueError("opening_date cannot be a future date")
         return v
 
@@ -140,7 +138,7 @@ class TransactionData(BaseModel):
     REQUIRED FIELDS (examine data/transactions.csv):
     - transaction_id: str = Unique identifier like "TXN_B24455F3"
     - account_id: str = Must match AccountData.account_id
-    - transaction_date: str = Date in YYYY-MM-DD format
+    - transaction_date: date = Date in YYYY-MM-DD format
     - transaction_type: str = Type like "Cash_Deposit", "Wire_Transfer"
     - amount: float = Transaction amount (negative for withdrawals)
     - description: str = Description like "Cash deposit at branch"
