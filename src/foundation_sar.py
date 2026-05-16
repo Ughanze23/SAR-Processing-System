@@ -159,7 +159,7 @@ class TransactionData(BaseModel):
    
 class CaseData(BaseModel):
     """Unified case object combining all data sources""" 
-    # TODO: Implement the CaseData schema with validation
+
     case_id: str = Field(..., description="Unique case identifier (generate with uuid)")
     customer: CustomerData = Field(..., description="Customer information object")
     accounts: List[AccountData] = Field(..., description="List of customer's accounts")
@@ -183,40 +183,22 @@ class CaseData(BaseModel):
         return v
 
 class RiskAnalystOutput(BaseModel):
-    """Risk Analyst agent structured output
+    """Risk Analyst agent structured output"""
     
-    REQUIRED FIELDS (for Chain-of-Thought agent output):
-    - classification: Literal['Structuring', 'Sanctions', 'Fraud', 'Money_Laundering', 'Other']
-    - confidence_score: float = Confidence between 0.0 and 1.0 (use ge=0.0, le=1.0)
-    - reasoning: str = Step-by-step analysis reasoning (max 500 chars)
-    - key_indicators: List[str] = List of suspicious indicators found
-    - risk_level: Literal['Low', 'Medium', 'High', 'Critical'] = Risk assessment
-    
-    HINT: Use Literal types to restrict classification and risk_level values
-    HINT: Use Field(..., ge=0.0, le=1.0) for confidence_score validation
-    HINT: Use Field(..., max_length=500) for reasoning length limit
-    """
-    # TODO: Implement the RiskAnalystOutput schema
-    pass
+    classification: Literal['Structuring', 'Sanctions', 'Fraud', 'Money_Laundering', 'Other'] = Field(..., description="Type of suspicious activity")
+    confidence_score: float = Field(..., ge=0.0, le=1.0, description="Confidence level between 0.0 and 1.0")
+    reasoning: str = Field(..., max_length=500, description="Detailed reasoning for risk assessment")
+    key_indicators: List[str] = Field(..., description="List of key indicators that contributed to the risk assessment")
+    risk_level: Literal['Low', 'Medium', 'High', 'Critical'] = Field(..., description="Overall risk level assessment")
 
 class ComplianceOfficerOutput(BaseModel):
-    """Compliance Officer agent structured output
-    
-    REQUIRED FIELDS (for ReACT agent output):
-    - narrative: str = Regulatory narrative text (max 1000 chars for ≤200 words)
-    - narrative_reasoning: str = Reasoning for narrative construction (max 500 chars)
-    - regulatory_citations: List[str] = List of relevant regulations like:
-      * "31 CFR 1020.320 (BSA)"
-      * "12 CFR 21.11 (SAR Filing)"
-      * "FinCEN SAR Instructions"
-    - completeness_check: bool = Whether narrative meets all requirements
-    
-    HINT: Use Field(..., max_length=1000) for narrative length limit
-    HINT: Use Field(..., max_length=500) for reasoning length limit
-    HINT: Use bool type for completeness_check
-    """
-    # TODO: Implement the ComplianceOfficerOutput schema
-    pass
+    """Compliance Officer agent structured output"""
+
+    narrative: str = Field(..., max_length=1000, description="Regulatory narrative text (max 1000 chars for ≤200 words)")
+    narrative_reasoning: str = Field(..., max_length=500, description="Reasoning for narrative construction (max 500 chars)")
+    regulatory_citations: List[str] = Field(..., description="List of relevant regulations")
+    completeness_check: bool = Field(..., description="Whether narrative meets all requirements")
+
 
 # ===== TODO: IMPLEMENT AUDIT LOGGING =====
 
