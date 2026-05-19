@@ -70,18 +70,108 @@ You MUST follow the ReACT framework for every narrative:
 }"""
 
     def generate_compliance_narrative(self, case_data, risk_analysis) -> 'ComplianceOfficerOutput':
-        """
-        Generate regulatory-compliant SAR narrative using ReACT framework.
-        
-        TODO: Implement narrative generation that:
-        - Creates ReACT-structured user prompt
-        - Includes risk analysis findings
-        - Makes OpenAI API call with constraints
-        - Validates narrative word count
-        - Parses and validates JSON response
-        - Logs operations for audit
-        """
-        pass
+        """Generate regulatory-compliant SAR narrative using ReACT framework."""
+        start_time = datetime.now()
+        _logged = False
+
+        try:
+            # Step 1 — build the user prompt
+            risk_summary = self._format_risk_analysis_for_prompt(risk_analysis)
+            txn_details  = self._format_transactions_for_compliance(case_data.transactions)
+            customer     = case_data.customer
+
+            user_prompt = f"""Generate a SAR narrative for the following case using the ReACT framework.
+
+CUSTOMER: {customer.name} (ID: {customer.customer_id}) | Risk Rating: {customer.risk_rating}
+
+RISK ANALYST FINDINGS:
+{risk_summary}
+
+TRANSACTIONS:
+{txn_details}
+Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤120 words."""
+
+            # Step 2 — call the OpenAI API
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": self.system_prompt},
+                    {"role": "user",   "content": user_prompt}
+                ],
+                temperature=0.2,
+                max_tokens=800,
+            )
+
+            # Step 3 — extract response text
+            response_content = response.choices[0].message.content
+
+            # Step 4 — parse JSON
+            try:
+                json_str    = self._extract_json_from_response(response_content)
+                parsed_json = json.loads(json_str)
+            except (ValueError, json.JSONDecodeError) as parse_err:
+                execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
+                self.logger.log_agent_action(
+                    agent_type="ComplianceOfficer",
+                    action="generate_compliance_narrative",
+                    case_id=case_data.case_id,
+                    input_data={"customer_id": case_data.customer.customer_id},
+                    output_data={},
+                    reasoning="JSON parsing failed",
+                    execution_time_ms=execution_time_ms,
+                    success=False,
+                    error_message=str(parse_err)
+                )
+                _logged = True
+                raise ValueError("Failed to parse Compliance Officer JSON output") from parse_err
+
+            # Step 5 — validate word count before Pydantic validation
+            narrative = parsed_json.get("narrative", "")
+            word_count = len(narrative.split())
+            if word_count > 120:
+                raise ValueError(f"Narrative exceeds 120 word limit ({word_count} words)")
+
+            # Step 6 — validate with Pydantic
+            output = ComplianceOfficerOutput.model_validate(parsed_json)
+
+            # Step 7 — log success
+            execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
+            self.logger.log_agent_action(
+                agent_type="ComplianceOfficer",
+                action="generate_compliance_narrative",
+                case_id=case_data.case_id,
+                input_data={
+                    "customer_id":      case_data.customer.customer_id,
+                    "classification":   risk_analysis.classification,
+                    "risk_level":       risk_analysis.risk_level,
+                },
+                output_data={
+                    "word_count":          word_count,
+                    "completeness_check":  output.completeness_check,
+                    "num_citations":       len(output.regulatory_citations),
+                },
+                reasoning=output.narrative_reasoning,
+                execution_time_ms=execution_time_ms,
+                success=True
+            )
+
+            return output
+
+        except Exception as e:
+            if not _logged:
+                execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
+                self.logger.log_agent_action(
+                    agent_type="ComplianceOfficer",
+                    action="generate_compliance_narrative",
+                    case_id=case_data.case_id,
+                    input_data={"customer_id": case_data.customer.customer_id},
+                    output_data={},
+                    reasoning="Narrative generation failed — see error_message",
+                    execution_time_ms=execution_time_ms,
+                    success=False,
+                    error_message=str(e)
+                )
+            raise
 
     def _extract_json_from_response(self, response_content: str) -> str:
         """Extract JSON content from LLM response"""
