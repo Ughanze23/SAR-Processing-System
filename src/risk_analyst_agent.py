@@ -32,6 +32,56 @@ from foundation_sar import (
 # Load environment variables
 load_dotenv()
 
+
+# ===== TRANSACTION CLASSIFICATION =====
+
+CREDIT_TYPES = {
+    "Check_Deposit",
+    "ACH_Credit",
+    "Direct_Deposit",
+    "Cash_Deposit",
+    "Wire_Transfer_Credit"
+}
+
+DEBIT_TYPES = {
+    "Online_Transfer",
+    "Debit_Purchase",
+    "Wire_Transfer",
+    "ACH_Debit",
+    "ATM_Withdrawal",
+    "Cash_Withdrawal",
+    "Wire_Transfer_Debit"
+}
+
+# ===== PROMPT ENGINEERING HELPERS =====
+
+def create_chain_of_thought_framework():
+    """Helper function showing Chain-of-Thought structure
+    
+    **Analysis Framework** (Think step-by-step):
+    1. **Data Review**: What does the data tell us?
+    2. **Pattern Recognition**: What patterns are suspicious?
+    3. **Regulatory Mapping**: Which regulations apply?
+    4. **Risk Quantification**: How severe is the risk?
+    5. **Classification Decision**: What category fits best?
+    """
+    return {
+        "step_1": "Data Review - Examine all available information",
+        "step_2": "Pattern Recognition - Identify suspicious indicators", 
+        "step_3": "Regulatory Mapping - Connect to known typologies",
+        "step_4": "Risk Quantification - Assess severity level",
+        "step_5": "Classification Decision - Determine final category"
+    }
+
+def get_classification_categories():
+    """Standard SAR classification categories  """
+    return {
+        "Structuring": "Transactions designed to avoid reporting thresholds",
+        "Sanctions": "Potential sanctions violations or prohibited parties",
+        "Fraud": "Fraudulent transactions or identity-related crimes",
+        "Money_Laundering": "Complex schemes to obscure illicit fund sources", 
+        "Other": "Suspicious patterns not fitting standard categories"
+    }
 class RiskAnalystAgent:
     """
     Risk Analyst agent using Chain-of-Thought reasoning.
@@ -93,13 +143,13 @@ class RiskAnalystAgent:
                             - Other            — {categories['Other']}
                             
                             **Output Format** — You MUST respond with ONLY valid JSON matching this exact structure (no additional text):
-                            ```json {
+                            {{
                             "classification": "<one of: Structuring, Sanctions, Fraud, Money_Laundering, Other>",
                             "confidence_score": <float between 0.0 and 1.0>,
                             "reasoning": "<detailed step-by-step reasoning through all 5 analysis steps, max 500 chars>",
                             "key_indicators": ["<indicator 1>", "<indicator 2>", "<indicator 3>"],
                             "risk_level": "<one of: Low, Medium, High>"
-                                }```  """
+                                }}  """
 
     def analyze_case(self, case_data: CaseData) -> 'RiskAnalystOutput':  # Use quotes for forward reference
         """
@@ -127,44 +177,72 @@ class RiskAnalystAgent:
 
     def _format_case_for_prompt(self, case_data) -> str:
         """Format case data for the analysis prompt
-        
-        TODO: Create readable prompt format that includes:
-        - Customer profile summary
-        - Account information
-        - Transaction details with key metrics
-        - Financial summary statistics
-        """
-        pass
-
-# ===== PROMPT ENGINEERING HELPERS =====
-
-def create_chain_of_thought_framework():
-    """Helper function showing Chain-of-Thought structure
     
-    **Analysis Framework** (Think step-by-step):
-    1. **Data Review**: What does the data tell us?
-    2. **Pattern Recognition**: What patterns are suspicious?
-    3. **Regulatory Mapping**: Which regulations apply?
-    4. **Risk Quantification**: How severe is the risk?
-    5. **Classification Decision**: What category fits best?
-    """
-    return {
-        "step_1": "Data Review - Examine all available information",
-        "step_2": "Pattern Recognition - Identify suspicious indicators", 
-        "step_3": "Regulatory Mapping - Connect to known typologies",
-        "step_4": "Risk Quantification - Assess severity level",
-        "step_5": "Classification Decision - Determine final category"
-    }
+        """
+        customer = case_data.customer
 
-def get_classification_categories():
-    """Standard SAR classification categories  """
-    return {
-        "Structuring": "Transactions designed to avoid reporting thresholds",
-        "Sanctions": "Potential sanctions violations or prohibited parties",
-        "Fraud": "Fraudulent transactions or identity-related crimes",
-        "Money_Laundering": "Complex schemes to obscure illicit fund sources", 
-        "Other": "Suspicious patterns not fitting standard categories"
-    }
+        # Customer profile section
+        customer_section = f"""
+                        CUSTOMER PROFILE:
+                        - ID:             {customer.customer_id}
+                        - Name:           {customer.name}
+                        - Date of Birth:  {customer.date_of_birth}
+                        - Address:        {customer.address}
+                        - Occupation:     {customer.occupation or 'Not provided'}
+                        - Annual Income:  ${customer.annual_income:,} if customer.annual_income else 'Not provided'
+                        - Risk Rating:    {customer.risk_rating}
+                        - Customer Since: {customer.customer_since}
+                        - Phone:          {customer.phone or 'Not provided'}
+                        """
+
+        # Accounts section
+        accounts_section = "\nACCOUNTS:\n"
+        for acc in case_data.accounts:
+            accounts_section += f"""
+                                - Account ID: {acc.account_id}
+                                Type: {acc.account_type} | Status: {acc.status}
+                                Current Balance:         ${acc.current_balance:,.2f}
+                                Average Monthly Balance: ${acc.average_monthly_balance:,.2f}
+                                Opened: {acc.opening_date}
+                                """
+
+        # Classify transactions using transaction_type
+        credits      = [txn for txn in case_data.transactions if txn.transaction_type in CREDIT_TYPES]
+        debits       = [txn for txn in case_data.transactions if txn.transaction_type in DEBIT_TYPES]
+        unclassified = [txn for txn in case_data.transactions
+                        if txn.transaction_type not in CREDIT_TYPES | DEBIT_TYPES]
+
+        total_credits = sum(txn.amount for txn in credits)
+        total_debits  = sum(abs(txn.amount) for txn in debits)
+        total_volume  = total_credits + total_debits
+
+        summary_section = f"""
+                            TRANSACTION SUMMARY:
+                            - Total transactions:           {len(case_data.transactions)}
+                            - Total volume:                 ${total_volume:,.2f}
+                            - Total credits (money in):     ${total_credits:,.2f} ({len(credits)} transactions)
+                            - Total debits (money out):     ${total_debits:,.2f} ({len(debits)} transactions)
+                            - Unclassified transactions:    {len(unclassified)}
+                            - Largest single transaction:   ${max(abs(txn.amount) for txn in case_data.transactions):,.2f}
+                            - Transactions just under $10k: {sum(1 for txn in case_data.transactions if 9000 <= abs(txn.amount) < 10000)}
+                            """
+
+        # Individual transaction details
+        transactions_section = "\nTRANSACTION DETAILS:\n"
+        for txn in case_data.transactions:
+            direction = "CREDIT" if txn.transaction_type in CREDIT_TYPES else "DEBIT"
+            transactions_section += (
+                f"- [{txn.transaction_date}] {direction} | {txn.transaction_type} | "
+                f"${txn.amount:,.2f} | Method: {txn.method} | "
+                f"Desc: {txn.description} | "
+                f"Counterparty: {txn.counterparty or 'N/A'} | "
+                f"Location: {txn.location or 'N/A'}\n"
+            )
+
+        return customer_section + accounts_section + summary_section + transactions_section
+
+
+
 
 # ===== TESTING UTILITIES =====
 
