@@ -22,51 +22,52 @@ from datetime import datetime
 from typing import Dict, Any, List
 from dotenv import load_dotenv
 
-# TODO: Import your foundation components
-# from foundation_sar import (
-#     ComplianceOfficerOutput,
-#     ExplainabilityLogger, 
-#     CaseData,
-#     RiskAnalystOutput
-# )
+try:
+    from src.foundation_sar import ComplianceOfficerOutput, ExplainabilityLogger, CaseData, RiskAnalystOutput
+except ImportError:
+    from foundation_sar import ComplianceOfficerOutput, ExplainabilityLogger, CaseData, RiskAnalystOutput
 
 # Load environment variables
 load_dotenv()
 
 class ComplianceOfficerAgent:
-    """
-    Compliance Officer agent using ReACT prompting framework.
-    
-    TODO: Implement agent that:
-    - Uses Reasoning + Action structured prompting
-    - Generates regulatory-compliant SAR narratives
-    - Enforces word limits and terminology
-    - Includes regulatory citations
-    - Validates narrative completeness
-    """
-    
+    """Compliance Officer agent using ReACT prompting framework."""
+
     def __init__(self, openai_client, explainability_logger, model="gpt-4"):
         """Initialize the Compliance Officer Agent
-        
+
         Args:
             openai_client: OpenAI client instance
             explainability_logger: Logger for audit trails
             model: OpenAI model to use
         """
-        # TODO: Initialize agent components
-        pass
-        
-        # TODO: Design ReACT system prompt
-        self.system_prompt = """TODO: Create your ReACT system prompt here
-        
-        Key elements to include:
-        - Agent persona as senior compliance officer
-        - ReACT framework: Reasoning Phase + Action Phase
-        - Narrative constraints (≤120 words)
-        - Regulatory terminology requirements
-        - JSON output format specification
-        - BSA/AML compliance focus
-        """
+        self.client = openai_client
+        self.logger = explainability_logger
+        self.model = model
+
+        self.system_prompt = """You are a Senior Compliance Officer with 15 years of experience in BSA/AML regulatory reporting at a major financial institution. Your role is to generate precise, regulatory-compliant Suspicious Activity Report (SAR) narratives for FinCEN submission.
+
+You MUST follow the ReACT framework for every narrative:
+
+**REASONING Phase:**
+1. Review the risk analyst's classification, confidence score, and key indicators.
+2. Assess what regulatory narrative elements are required (who, what, when, where, why).
+3. Identify the most relevant BSA/AML statutes and FinCEN SAR Instructions to cite.
+4. Plan a concise narrative structure that stays within the 120 word limit.
+
+**ACTION Phase:**
+1. Draft a SAR narrative in ≤120 words using professional regulatory language.
+2. Include customer identification, transaction amounts, dates, and suspicious pattern.
+3. Reference the specific suspicious activity typology and why it warrants reporting.
+4. Verify all required elements are present before finalising.
+
+**Output Format** — You MUST respond with ONLY valid JSON matching this exact structure (no additional text):
+{
+    "narrative": "<SAR narrative text, max 120 words, suitable for FinCEN submission>",
+    "narrative_reasoning": "<brief explanation of narrative construction decisions, max 500 chars>",
+    "regulatory_citations": ["<citation 1>", "<citation 2>"],
+    "completeness_check": <true if narrative meets all SAR requirements, false otherwise>
+}"""
 
     def generate_compliance_narrative(self, case_data, risk_analysis) -> 'ComplianceOfficerOutput':
         """
