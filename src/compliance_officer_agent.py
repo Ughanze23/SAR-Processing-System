@@ -119,6 +119,19 @@ You MUST follow the ReACT framework for every narrative:
             f"Key Indicators:\n{indicators}"
         )
 
+    def _format_transactions_for_compliance(self, transactions) -> str:
+        """Format transactions into a concise list for the compliance prompt"""
+        result = ""
+        for i, txn in enumerate(transactions, 1):
+            line = f"{i}. {txn.transaction_date}: ${txn.amount:,.2f} {txn.transaction_type}"
+            if txn.location:
+                line += f" at {txn.location}"
+            line += f" via {txn.method}"
+            if txn.description:
+                line += f" ({txn.description})"
+            result += line + "\n"
+        return result
+
     def _validate_narrative_compliance(self, narrative: str) -> Dict[str, Any]:
         """Validate narrative meets regulatory requirements
         
