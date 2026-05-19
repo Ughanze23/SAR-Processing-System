@@ -213,7 +213,7 @@ class TestRiskAnalystAgent:
                 transaction_type="Test",
                 amount=100.0,
                 description="Test transaction",
-                method="Test"
+                method="ATM"
             )],
             case_created_at=datetime.now().isoformat(),
             data_sources={"test": "data"}
@@ -410,7 +410,7 @@ That completes the analysis.'''
                 transaction_type="Test",
                 amount=1000.0,
                 description="API test",
-                method="Test"
+                method="ATM"
             )],
             case_created_at=datetime.now().isoformat(),
             data_sources={"api": "test"}
