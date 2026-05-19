@@ -84,15 +84,29 @@ You MUST follow the ReACT framework for every narrative:
         pass
 
     def _extract_json_from_response(self, response_content: str) -> str:
-        """Extract JSON content from LLM response
-        
-        TODO: Implement JSON extraction that handles:
-        - JSON in code blocks (```json)
-        - JSON in plain text
-        - Malformed responses
-        - Empty responses
-        """
-        pass
+        """Extract JSON content from LLM response"""
+        if not response_content or not response_content.strip():
+            raise ValueError("No JSON content found")
+
+        # Case 1 — JSON wrapped in ```json ... ``` code block
+        if "```json" in response_content:
+            start = response_content.find("```json") + 7
+            end   = response_content.find("```", start)
+            return response_content[start:end].strip()
+
+        # Case 2 — JSON wrapped in plain ``` ... ``` block
+        if "```" in response_content:
+            start = response_content.find("```") + 3
+            end   = response_content.find("```", start)
+            return response_content[start:end].strip()
+
+        # Case 3 — raw JSON object somewhere in the response
+        start = response_content.find("{")
+        end   = response_content.rfind("}") + 1
+        if start != -1 and end > start:
+            return response_content[start:end].strip()
+
+        raise ValueError("No JSON content found")
 
     def _format_risk_analysis_for_prompt(self, risk_analysis) -> str:
         """Format risk analysis results for compliance prompt
