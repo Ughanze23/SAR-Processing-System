@@ -23,11 +23,11 @@ from typing import Dict, Any, List
 from dotenv import load_dotenv
 
 # TODO: Import your foundation components
-# from foundation_sar import (
-#     RiskAnalystOutput, 
-#     ExplainabilityLogger, 
-#     CaseData
-# )
+from foundation_sar import (
+     RiskAnalystOutput, 
+     ExplainabilityLogger, 
+     CaseData
+ )
 
 # Load environment variables
 load_dotenv()
@@ -52,21 +52,56 @@ class RiskAnalystAgent:
             explainability_logger: Logger for audit trails
             model: OpenAI model to use
         """
-        # TODO: Initialize agent components
-        pass
-        
-        # TODO: Design Chain-of-Thought system prompt
-        self.system_prompt = """TODO: Create your Chain-of-Thought system prompt here
-        
-        Key elements to include:
-        - Agent persona as experienced financial crime analyst
-        - Structured reasoning framework (5 steps)
-        - Classification categories (Structuring, Sanctions, Fraud, Money_Laundering, Other)
-        - JSON output format specification
-        - Professional terminology and approach
-        """
+        self.openai_client = openai_client
+        self.explainability_logger = explainability_logger
+        self.model = model  
 
-    def analyze_case(self, case_data) -> 'RiskAnalystOutput':  # Use quotes for forward reference
+        framework  = create_chain_of_thought_framework()
+        categories = get_classification_categories()
+        
+        
+        self.system_prompt = f"""You are a Senior Financial Crime Risk Analyst with 20 years of experience in anti-money laundering (AML) and Bank Secrecy Act (BSA) compliance at a major financial institution. Your role is to systematically analyze customer profiles, account activity, and transaction patterns to detect suspicious financial activities that may require regulatory reporting.
+ 
+                            You MUST follow this structured Chain-of-Thought reasoning framework for every case:
+ 
+                            **Analysis Framework** (Think step-by-step):
+                            STEP 1. {framework['step_1']}: Review the customer profile (identity, occupation, income, risk rating), account details (types, balances, status), and transaction history (amounts, types, methods, frequency, timing).
+ 
+                            STEP 2. {framework['step_2']}: Identify specific red flags such as:
+                            - Structuring: transactions just under $10,000 reporting threshold
+                            - Layering: multiple transfers between accounts to obscure the source
+                            - Unusual volume: transactions inconsistent with stated income/occupation
+                            - High-risk methods: wire transfers, cash deposits/withdrawals
+                            - Geographic anomalies: transfers to high-risk jurisdictions
+ 
+                            STEP 3. {framework['step_3']}: Map identified patterns to specific BSA/AML regulations and typologies. Consider CTR ($10,000 cash reporting), SAR filing requirements (31 CFR 1020.320), structuring prohibition (31 USC 5324), and OFAC sanctions screening.
+                            
+                            STEP 4. {framework['step_4']}: Assess overall risk considering:
+                            - Number and severity of red flags
+                            - Customer's existing risk rating
+                            - Transaction amounts relative to profile
+                            - Frequency and recency of suspicious activity
+                            - Risk Level must be: Low, Medium, High, or Critical
+                            
+                            STEP 5. {framework['step_5']}: Select the most applicable classification from the categories below based on all evidence:
+                            
+                            **Classification Categories:**
+                            - Structuring      — {categories['Structuring']}
+                            - Sanctions        — {categories['Sanctions']}
+                            - Fraud            — {categories['Fraud']}
+                            - Money_Laundering — {categories['Money_Laundering']}
+                            - Other            — {categories['Other']}
+                            
+                            **Output Format** — You MUST respond with ONLY valid JSON matching this exact structure (no additional text):
+                            ```json {
+                            "classification": "<one of: Structuring, Sanctions, Fraud, Money_Laundering, Other>",
+                            "confidence_score": <float between 0.0 and 1.0>,
+                            "reasoning": "<detailed step-by-step reasoning through all 5 analysis steps, max 500 chars>",
+                            "key_indicators": ["<indicator 1>", "<indicator 2>", "<indicator 3>"],
+                            "risk_level": "<one of: Low, Medium, High>"
+                                }```  """
+
+    def analyze_case(self, case_data: CaseData) -> 'RiskAnalystOutput':  # Use quotes for forward reference
         """
         Perform risk analysis on a case using Chain-of-Thought reasoning.
         
@@ -77,7 +112,7 @@ class RiskAnalystAgent:
         - Handles errors and logs operations
         - Returns validated RiskAnalystOutput
         """
-        pass
+        #cusomer profile
 
     def _extract_json_from_response(self, response_content: str) -> str:
         """Extract JSON content from LLM response
@@ -106,8 +141,6 @@ class RiskAnalystAgent:
 def create_chain_of_thought_framework():
     """Helper function showing Chain-of-Thought structure
     
-    TODO: Study this example and adapt for financial crime analysis:
-    
     **Analysis Framework** (Think step-by-step):
     1. **Data Review**: What does the data tell us?
     2. **Pattern Recognition**: What patterns are suspicious?
@@ -124,10 +157,7 @@ def create_chain_of_thought_framework():
     }
 
 def get_classification_categories():
-    """Standard SAR classification categories
-    
-    TODO: Use these categories in your prompts:
-    """
+    """Standard SAR classification categories  """
     return {
         "Structuring": "Transactions designed to avoid reporting thresholds",
         "Sanctions": "Potential sanctions violations or prohibited parties",
