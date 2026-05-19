@@ -109,15 +109,15 @@ You MUST follow the ReACT framework for every narrative:
         raise ValueError("No JSON content found")
 
     def _format_risk_analysis_for_prompt(self, risk_analysis) -> str:
-        """Format risk analysis results for compliance prompt
-        
-        TODO: Create structured format that includes:
-        - Classification and confidence
-        - Key suspicious indicators
-        - Risk level assessment
-        - Analyst reasoning
-        """
-        pass
+        """Format risk analysis results for compliance prompt"""
+        indicators = "\n".join(f"  - {ind}" for ind in risk_analysis.key_indicators)
+        return (
+            f"Classification:   {risk_analysis.classification}\n"
+            f"Confidence Score: {risk_analysis.confidence_score:.2f}\n"
+            f"Risk Level:       {risk_analysis.risk_level}\n"
+            f"Analyst Reasoning: {risk_analysis.reasoning}\n"
+            f"Key Indicators:\n{indicators}"
+        )
 
     def _validate_narrative_compliance(self, narrative: str) -> Dict[str, Any]:
         """Validate narrative meets regulatory requirements
