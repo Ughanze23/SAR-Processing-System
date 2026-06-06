@@ -1,0 +1,27 @@
+# Environment
+.env
+
+# Project instructions
+CLAUDE.md
+
+# Generated outputs
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.venv/
+env/

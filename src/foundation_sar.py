@@ -96,8 +96,11 @@ class AccountData(BaseModel):
     def normalise_enum_fields(cls, v) -> str:
         """Handles case variations: 'checking' → 'Checking', 'ACTIVE' → 'Active'."""
         if isinstance(v, str):
-            if v.strip().lower() == "money_market":
+            normalized = v.strip().lower()
+            if normalized == "money_market":
                 return "Money_Market"
+            if normalized == "business_checking":
+                return "Business_Checking"
             return v.strip().capitalize()
         return v
 
