@@ -1,413 +1,180 @@
-# 🏦 Financial Services Agentic AI Project - SAR Processing System
+# SAR Processing System
 
-## 📋 Project Overview
+An exploration of multi-agent AI applied to financial crime compliance. This project automates the detection and reporting of suspicious financial activity using two cooperating AI agents, a human-in-the-loop decision gate, and a full audit trail — built entirely in Python with synthetic data.
 
-**The Challenge:** As the newest AI Engineer on the financial crimes task force, you are at the forefront of the bank's defense against a rising tide of illicit transactions. The institution is grappling with increasingly complex schemes, from intricate money laundering operations to sophisticated fraud networks, and the pressure from regulators is mounting. 
-
-Your mission is to architect and build an intelligent, two-pronged AI system that can not only think like a seasoned Risk Analyst to detect suspicious activities but also write like a Compliance Officer to articulate these findings in perfectly crafted Suspicious Activity Reports. This system will be the critical tool that empowers the compliance team to move faster, act with greater precision, and ultimately protect the integrity of the financial system, all while under the watchful eye of regulatory examiners who will scrutinize your work for its accuracy, efficiency, and transparency.
-
-You will build an **AI-powered Suspicious Activity Report (SAR) processing system** that automates financial crime detection using a multi-agent architecture. This project simulates real-world regulatory requirements that financial institutions face when detecting and reporting suspicious activities to authorities like FinCEN.
-
-### 🎯 Learning Objectives
-
-By completing this project, you will:
-
-1. **Design Multi-Agent Systems**: Build cooperating AI agents with distinct responsibilities
-2. **Implement Prompting Strategies**: Apply Chain-of-Thought and ReACT prompting frameworks
-3. **Handle Structured Data**: Work with Pydantic schemas for data validation and type safety
-4. **Build Compliance Workflows**: Create audit trails and regulatory reporting systems
-5. **Optimize AI Costs**: Implement efficient two-stage processing to minimize API calls
-
-### 🏗️ System Architecture
-
-Your system will consist of **two specialized AI agents**:
-
-```
-📊 Data Processing → 🔍 Risk Analyst Agent → 👤 Human Review → ✅ Compliance Officer Agent → 📄 SAR Filing
-```
-
-- **Risk Analyst Agent**: Uses Chain-of-Thought reasoning to classify suspicious activities
-- **Compliance Officer Agent**: Uses ReACT prompting to generate regulatory narratives
-- **Human-in-the-Loop**: Critical decision gates for regulatory compliance
-
-### 🎯 Business Context: Why SAR Processing Matters
-
-**Regulatory Requirements:**
-- Financial institutions **must** file SARs within 30 days of detecting suspicious activity
-- Failure to file can result in **criminal penalties** and fines exceeding $1 billion
-- Average investigation costs $500-2,000 per case
-- Large banks file 15,000-50,000 SARs annually
-
-**Your AI Solution Addresses:**
-- **Volume**: Process millions of transactions efficiently
-- **Quality**: Consistent analytical frameworks reduce false positives
-- **Cost**: Automated screening and documentation
-- **Risk**: Systematic detection prevents regulatory violations
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Python 3.8+
-- Vocareum OpenAI API key (from your Udacity workspace "Cloud Resources")
-- VS Code with Jupyter extension (recommended)
-
-### 1. Environment Setup
-
-```bash
-# Clone the project (if not already done)
-cd project/starter
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up your Vocareum OpenAI API key
-cp .env.template .env
-# Edit .env and replace the placeholder with your actual Vocareum API key
-```
-
-### 2. Vocareum OpenAI API Key Setup
-
-**Important:** This project uses Vocareum OpenAI API keys, not direct OpenAI keys.
-
-**Getting Your API Key:**
-1. In your Udacity workspace, click "Cloud Resources" in the navigation pane
-2. Copy the provided OpenAI API key (starts with `voc-`)
-3. Paste it into your `.env` file as `OPENAI_API_KEY=voc-your-actual-key-here`
-
-**Key Differences:**
-- Vocareum keys start with `voc-` instead of `sk-`
-- API calls are routed through `https://openai.vocareum.com/v1`
-- Budget and usage are managed by Udacity through Vocareum
-
-### 3. Project Structure
-
-```
-starter/
-├── README.md                    # This file
-├── requirements.txt             # Python dependencies
-├── .env.template               # Environment variables template
-├── data/                       # Sample financial data
-│   ├── customers.csv           # Customer profiles
-│   ├── accounts.csv            # Account information
-│   └── transactions.csv        # Transaction records
-├── notebooks/                  # Jupyter notebooks for development
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_agent_development.ipynb
-│   └── 03_workflow_integration.ipynb
-├── src/                        # Source code modules
-│   ├── __init__.py
-│   ├── foundation_sar.py       # Core data schemas (TO IMPLEMENT)
-│   ├── risk_analyst_agent.py   # Risk analysis agent (TO IMPLEMENT)
-│   └── compliance_officer_agent.py  # Compliance agent (TO IMPLEMENT)
-├── tests/                      # Unit tests
-│   ├── __init__.py
-│   ├── test_foundation.py     # Foundation tests (10) - Run to validate Phase 1
-│   ├── test_risk_analyst.py   # Risk Analyst tests (10) - Run to validate Phase 2  
-│   └── test_compliance_officer.py # Compliance tests (10) - Run to validate Phase 3
-├── outputs/                    # Generated files
-│   ├── filed_sars/            # SAR documents
-│   └── audit_logs/            # Decision audit trails
-└── docs/                      # Additional documentation
-    ├── system_architecture.md    # 🏗️ SYSTEM OVERVIEW (Read FIRST!)
-    ├── prompting_guide.md
-    ├── regulatory_context.md
-    └── troubleshooting.md
-```
-
-## 📚 Project Phases
-
-### 🏗️ **PREREQUISITE: System Architecture Overview**
-**📖 Before Starting Phase 1, Read:** `docs/system_architecture.md`
-
-**Understanding Required:**
-- Complete system data flow from CSV files to SAR documents
-- Role of each Pydantic schema (Customer, Account, Transaction, Case)
-- Purpose of RiskAnalystOutput and ComplianceOfficerOutput schemas
-- ExplainabilityLogger and audit trail requirements
-- DataLoader responsibilities and error handling
-- Human-in-the-loop decision gates
-
-**Why This Matters:** Phase 1 requires implementing foundation components (schemas, logger, dataloader) that you haven't encountered in the data exploration notebook. The system architecture explains what each component does and how they work together.
-
-### Phase 1: Foundation & Data Modeling
-**Notebook: `01_data_exploration.ipynb`**
-**📖 Required Reading FIRST:** `docs/system_architecture.md`
-
-**Learning Focus:** Pydantic schemas, data validation, type safety
-
-**Tasks:**
-1. **Explore the Dataset**: Understand customer, account, and transaction data
-2. **Design Data Schemas**: Create Pydantic models for type safety
-3. **Build DataLoader**: Combine fragmented data into unified cases
-4. **Implement Logging**: Create audit trail system
-
-**Key Files to Implement:**
-- `src/foundation_sar.py` - Core data schemas and utilities
-
-**Success Criteria:**
-- [ ] All data schemas validate correctly
-- [ ] DataLoader creates unified case objects
-- [ ] Audit logging captures all operations
-- [ ] **Unit tests pass**: `python -m pytest tests/test_foundation.py -v` (10/10 tests should pass)
-
-### Phase 2: Risk Analyst Agent
-**Notebook: `02_agent_development.ipynb`**
-
-**Learning Focus:** Chain-of-Thought prompting, financial crime detection
-
-**Tasks:**
-1. **Study Chain-of-Thought Prompting**: Learn systematic reasoning frameworks
-2. **Implement Risk Classification**: Build agent to categorize suspicious activities
-3. **Handle Structured Output**: Parse and validate AI responses
-4. **Test with Real Data**: Validate against sample cases
-
-**Key Files to Implement:**
-- `src/risk_analyst_agent.py` - Risk analysis with Chain-of-Thought reasoning
-
-**Success Criteria:**
-- [ ] Agent classifies 5 activity types: Structuring, Sanctions, Fraud, Money_Laundering, Other
-- [ ] Structured JSON output with confidence scores
-- [ ] Chain-of-Thought reasoning visible in responses
-- [ ] Handles edge cases and parsing errors
-- [ ] **Unit tests pass**: `python -m pytest tests/test_risk_analyst.py -v` (10/10 tests should pass)
-
-### Phase 3: Compliance Officer Agent
-**Notebook: `02_agent_development.ipynb` (continued)**
-
-**Learning Focus:** ReACT prompting, regulatory narrative generation
-
-**Tasks:**
-1. **Learn ReACT Framework**: Reasoning + Action structured prompting
-2. **Generate SAR Narratives**: Create regulatory-compliant documentation
-3. **Enforce Constraints**: 120-word limits, specific terminology
-4. **Regulatory Citations**: Include relevant BSA/AML references
-
-**Key Files to Implement:**
-- `src/compliance_officer_agent.py` - Compliance narrative generation
-
-**Success Criteria:**
-- [ ] Generates compliant SAR narratives ≤120 words
-- [ ] Includes regulatory citations
-- [ ] ReACT reasoning framework visible
-- [ ] Validates narrative completeness
-- [ ] **Unit tests pass**: `python -m pytest tests/test_compliance_officer.py -v` (10/10 tests should pass)
-
-### Phase 4: Workflow Integration
-**Notebook: `03_workflow_integration.ipynb`**
-
-**Learning Focus:** Multi-agent coordination, human-in-the-loop systems
-
-**Tasks:**
-1. **Build Two-Stage Workflow**: Risk analysis → Human review → Compliance generation
-2. **Implement Human Gates**: Decision points for proceeding with SAR filing
-3. **Generate SAR Documents**: Complete regulatory forms
-4. **Create Efficiency Metrics**: Track cost savings and processing times
-
-**Success Criteria:**
-- [ ] Complete workflow processes real cases
-- [ ] Human review points function correctly
-- [ ] SAR documents generated with all required fields
-- [ ] Audit trails capture all decisions
-- [ ] Efficiency metrics show cost optimization
-
-## 💡 Key Implementation Hints
-
-### 1. Pydantic Schema Design
-```python
-from pydantic import BaseModel, Field, field_validator
-from typing import Literal, List, Optional
-
-class CustomerData(BaseModel):
-    customer_id: str = Field(..., description="Unique customer identifier")
-    # Add more fields based on data/customers.csv
-    
-    @field_validator('customer_id')
-    @classmethod
-    def validate_customer_id(cls, v):
-        # Add your validation logic
-        return v
-```
-
-### 2. Chain-of-Thought Prompting Structure
-```python
-system_prompt = """You are a Senior Financial Crime Risk Analyst...
-
-**Analysis Framework** (Think step-by-step):
-1. **Data Review**: Examine customer profile...
-2. **Pattern Recognition**: Identify indicators...
-3. **Regulatory Mapping**: Connect to typologies...
-4. **Risk Quantification**: Assess severity...
-5. **Classification Decision**: Determine category...
-"""
-```
-
-### 3. ReACT Framework Implementation
-```python
-react_prompt = """**ReACT Framework**: Follow this approach:
-
-**REASONING Phase:**
-1. Review the risk analyst's findings...
-2. Assess regulatory requirements...
-
-**ACTION Phase:**
-1. Draft concise narrative...
-2. Include specific details...
-"""
-```
-
-### 4. Error Handling & Validation
-```python
-try:
-    # Parse AI response
-    result = json.loads(response_content)
-    validated_output = YourPydanticModel(**result)
-except json.JSONDecodeError:
-    # Handle parsing errors
-except ValidationError:
-    # Handle schema validation errors
-```
-
-## 📊 Sample Data Overview
-
-Your dataset includes:
-- **150 customers** with varying risk ratings
-- **200+ accounts** across different types
-- **500+ transactions** with suspicious patterns
-
-**Key Suspicious Patterns to Detect:**
-- **Structuring**: Multiple transactions just under $10,000 reporting threshold
-- **Money Laundering**: Complex transaction chains obscuring fund sources
-- **Sanctions**: Transactions involving prohibited parties or countries
-- **Fraud**: Irregular patterns suggesting fraudulent activity
-
-## 🧪 Testing Your Implementation
-
-### **Progressive Testing Strategy**
-
-Each project phase includes comprehensive unit tests that validate your implementation. The tests are designed to:
-- **Skip automatically** when modules aren't implemented yet
-- **Provide clear feedback** on what needs to be fixed
-- **Validate production readiness** when implementation is complete
-
-### **Running Tests by Phase**
-
-```bash
-# Phase 1: Foundation (after implementing foundation_sar.py)
-python -m pytest tests/test_foundation.py -v
-# Expected: 10 tests pass (or skip if not implemented)
-
-# Phase 2: Risk Analyst (after implementing risk_analyst_agent.py)  
-python -m pytest tests/test_risk_analyst.py -v
-# Expected: 10 tests pass (or skip if not implemented)
-
-# Phase 3: Compliance Officer (after implementing compliance_officer_agent.py)
-python -m pytest tests/test_compliance_officer.py -v  
-# Expected: 10 tests pass (or skip if not implemented)
-
-# All phases complete - Full system validation
-python -m pytest tests/ -v
-# Expected: 30 tests pass (100% success rate)
-```
-
-### **Test Categories**
-
-**Foundation Tests (10 tests)**:
-- Data schema validation (Pydantic models)
-- CSV loading and data aggregation
-- Audit logging functionality
-- Error handling and edge cases
-
-**Risk Analyst Tests (10 tests)**:
-- Agent initialization and configuration
-- Chain-of-Thought analysis workflow
-- OpenAI API integration and JSON parsing
-- Error handling for malformed responses
-
-**Compliance Officer Tests (10 tests)**:
-- ReACT framework implementation
-- Regulatory narrative generation (≤120 words)
-- Multi-format response parsing
-- Compliance validation and citations
-
-### **Understanding Test Results**
-
-**✅ PASSED**: Your implementation works correctly  
-**⏭️ SKIPPED**: Module not implemented yet (expected during development)  
-**❌ FAILED**: Implementation needs fixes - check error messages for guidance
-
-### **Test-Driven Development Tips**
-
-1. **Start with failing tests**: Run tests before implementing to understand requirements
-2. **Implement incrementally**: Focus on making one test pass at a time
-3. **Use test errors as guides**: Error messages tell you exactly what to fix
-4. **Validate frequently**: Run tests after each major change
-
-```bash
-# Quick validation during development
-python -m pytest tests/test_foundation.py::TestCustomerData::test_valid_customer_data -v
-# Run specific test to debug individual functions
-```
-
-## 🎯 Assessment Criteria
-
-Your project will be evaluated on:
-
-1. **Technical Implementation (40%)**
-   - Correct Pydantic schema design
-   - Proper error handling and validation
-   - Clean, well-structured code
-
-2. **AI Agent Design (30%)**
-   - Effective prompting strategies
-   - Structured output parsing
-   - Agent coordination
-
-3. **Regulatory Compliance (20%)**
-   - Accurate SAR narrative generation
-   - Complete audit trails
-   - Proper regulatory citations
-
-4. **System Integration (10%)**
-   - End-to-end workflow functionality
-   - Human-in-the-loop implementation
-   - Efficiency optimizations
-
-## 🔧 Development Tips
-
-### Debugging AI Responses
-- Always print raw LLM responses before parsing
-- Use structured logging to track decision flows
-- Test with edge cases and malformed inputs
-
-### Prompt Engineering
-- Start with simple prompts and iterate
-- Use examples in prompts for better performance
-- Test prompts with different transaction patterns
-
-### Performance Optimization
-- Implement the two-stage workflow to minimize API calls
-- Cache expensive operations where possible
-- Use appropriate temperature settings (0.2-0.3 for structured tasks)
-
-## 📚 Additional Resources
-
-- **🏗️ System Architecture**: `docs/system_architecture.md` - **READ FIRST!** Complete system overview with data flow diagrams
-- **Regulatory Context**: `docs/regulatory_context.md`
-- **Prompting Guide**: `docs/prompting_guide.md`
-- **Troubleshooting**: `docs/troubleshooting.md`
-- **BSA/AML Guidelines**: [FinCEN Official Resources](https://www.fincen.gov/)
-
-## 🆘 Getting Help
-
-1. **🏗️ Start with System Architecture** - Read `docs/system_architecture.md` for complete system understanding
-2. **Review the documentation** in the `docs/` folder
-3. **Check the test files** for expected behavior
-4. **Use the notebooks** for interactive development
-5. **Study the sample data** to understand patterns
-
-Remember: This project simulates real regulatory requirements. Focus on building systems that are **explainable**, **auditable**, and **compliant** with financial regulations.
+The core question driving this build: **can a well-designed multi-agent system handle the reasoning and documentation demands of a regulated compliance workflow, end to end?**
 
 ---
 
-**Ready to build the future of financial crime detection? Let's get started! 🚀**
+## What It Does
+
+Financial institutions are legally required to file Suspicious Activity Reports (SARs) with FinCEN within 30 days of detecting suspicious activity. In practice, this process is slow, manual, and inconsistent. This system automates the two hardest parts — risk classification and narrative generation — while keeping a human reviewer in the decision loop before anything gets filed.
+
+The pipeline:
+
+```
+CSV Data → DataLoader → CaseData → Risk Analyst Agent → Human Review Gate
+                                                      → Compliance Officer Agent → SAR Document + Audit Log
+```
+
+---
+
+## System Architecture
+
+![System Architecture](assets/architecture.png)
+
+The foundation layer (`foundation_sar.py`) defines the Pydantic schemas that flow through the entire system — `CustomerData`, `AccountData`, `TransactionData` are aggregated by `DataLoader` into a single `CaseData` object. Every downstream component works from that unified case representation.
+
+---
+
+## The Agents
+
+### Risk Analyst Agent — Chain-of-Thought Reasoning
+
+The first agent receives a `CaseData` object and classifies the suspicious activity into one of five categories: `Structuring`, `Sanctions`, `Fraud`, `Money_Laundering`, or `Other`.
+
+It uses **Chain-of-Thought prompting** — the model is instructed to reason step-by-step through the customer profile, transaction patterns, account behaviour, and regulatory indicators before committing to a classification. This makes the reasoning traceable and auditable, not just a label.
+
+Output is a validated `RiskAnalystOutput` containing the classification, a confidence score, risk level, key indicators, and the full reasoning chain.
+
+### Compliance Officer Agent — ReACT Framework
+
+The second agent only runs if the human reviewer approves the risk finding. It takes the `CaseData` and `RiskAnalystOutput` and generates a FinCEN-ready SAR narrative using the **ReACT (Reasoning + Action) framework** — explicitly separating the reasoning phase (what regulatory context applies, what details are material) from the action phase (drafting the narrative).
+
+The narrative is constrained to 120 words, must include regulatory citations (BSA/AML), and is validated against a `ComplianceOfficerOutput` schema before being accepted.
+
+---
+
+## Human-in-the-Loop
+
+The human review gate sits between the two agents deliberately. The Risk Analyst's findings — classification, confidence score, risk level, and reasoning — are surfaced to a reviewer before the Compliance Officer is ever invoked. A reviewer can approve (triggering narrative generation and SAR filing) or reject (closing the case with an audit entry).
+
+This is not just a UX choice. In a regulated environment, AI-generated compliance documents require human sign-off. The gate enforces that contractually, not just as a best practice.
+
+---
+
+## Audit Trail
+
+Every agent action — successful or failed — is logged by `ExplainabilityLogger` to an append-only JSONL file. Each entry captures the agent type, action, case ID, input summary, output summary, the agent's reasoning, execution time, and success status.
+
+This produces an audit trail that can be examined by regulators, surfaced in Log Analytics, or replayed to reconstruct any decision.
+
+---
+
+## Project Structure
+
+```
+SAR_system/
+├── src/
+│   ├── foundation_sar.py           # Pydantic schemas, DataLoader, ExplainabilityLogger
+│   ├── risk_analyst_agent.py       # Risk Analyst with Chain-of-Thought prompting
+│   └── compliance_officer_agent.py # Compliance Officer with ReACT prompting
+├── notebooks/
+│   ├── 01_data_exploration.ipynb   # Data profiling and schema design
+│   ├── 02_agent_development.ipynb  # Agent prompt engineering and testing
+│   └── 03_workflow_integration.ipynb # End-to-end workflow and integration tests
+├── tests/
+│   ├── test_foundation.py          # 10 tests — schemas, DataLoader, logger
+│   ├── test_risk_analyst.py        # 10 tests — CoT analysis, JSON parsing, error handling
+│   └── test_compliance_officer.py  # 10 tests — ReACT narratives, validation, citations
+├── data/
+│   ├── customers.csv               # 150 synthetic customers with risk ratings
+│   ├── accounts.csv                # 178 accounts across 4 types
+│   └── transactions.csv            # 4,268 transactions with suspicious patterns
+├── outputs/
+│   ├── filed_sars/                 # Generated SAR JSON documents
+│   └── audit_logs/                 # JSONL decision audit trails
+└── assets/
+    └── architecture.png            # System architecture diagram
+```
+
+---
+
+## Getting Started
+
+### Requirements
+
+- Python 3.8+
+- An OpenAI-compatible API key
+
+```bash
+pip install -r requirements.txt
+```
+
+### Environment
+
+```bash
+cp .env.template .env
+# Add your OPENAI_API_KEY to .env
+```
+
+### Running Tests
+
+```bash
+# Full test suite (30 tests)
+python -m pytest tests/ -v
+
+# Individual modules
+python -m pytest tests/test_foundation.py -v
+python -m pytest tests/test_risk_analyst.py -v
+python -m pytest tests/test_compliance_officer.py -v
+```
+
+All 30 tests pass. Agent tests use mocked OpenAI responses — no API key needed to run the test suite.
+
+---
+
+## What's in the Data
+
+The synthetic dataset is designed to contain realistic suspicious patterns:
+
+- **Structuring** — repeated sub-threshold deposits to avoid CTR filing requirements
+- **Money Laundering** — layered transactions obscuring the origin of funds
+- **Sanctions** — transactions involving flagged counterparties or jurisdictions
+- **Fraud** — irregular velocity and amount patterns inconsistent with customer profile
+
+150 customers, 178 accounts, 4,268 transactions.
+
+---
+
+## Phase 2: Azure Production Deployment
+
+The local prototype validates the agent design. The next phase moves this to Azure with production-grade infrastructure, replacing the notebook workflow and mocked API calls with managed, scalable services.
+
+### Core Shift: Azure AI Foundry + Semantic Kernel
+
+The agents will be rebuilt using **Semantic Kernel** as the agent framework, deployed and managed through **Azure AI Foundry**. Semantic Kernel's Process Framework handles the stateful two-stage workflow natively — including the async human approval gate — replacing the current `input()` pattern with a proper event-driven step.
+
+**Azure AI Foundry** provides model deployment (Azure OpenAI GPT-4o), prompt versioning, built-in tracing to replace `ExplainabilityLogger`, and evaluation pipelines to continuously validate classification accuracy and narrative quality.
+
+### Infrastructure
+
+| Component | Azure Service |
+|---|---|
+| Agent framework | Semantic Kernel + Azure AI Foundry Agent Service |
+| LLM | Azure OpenAI (GPT-4o) via Foundry deployment |
+| Workflow orchestration | SK Process Framework (Durable Functions for scale) |
+| Human review notifications | Azure Logic Apps → Teams/email |
+| Customer/transaction data | Azure SQL Database |
+| SAR document storage | Azure Blob Storage |
+| Audit trail | Azure Cosmos DB + Log Analytics |
+| Secrets management | Azure Key Vault + Managed Identity |
+| Observability | Application Insights + Foundry Tracing |
+
+### What Changes, What Stays
+
+The prompting strategies (Chain-of-Thought, ReACT), Pydantic schemas, and the two-agent architecture carry forward unchanged. Semantic Kernel wraps the existing agent logic as `ChatCompletionAgent` definitions with plugins. The human gate becomes an async Foundry/SK process step waiting on an external approval event rather than a blocking `input()` call.
+
+The synthetic dataset continues through Phase 2 — the goal is validating the cloud architecture, not production data.
+
+---
+
+## Key Design Decisions
+
+**Two-stage processing** — Running the Compliance Officer only on approved cases avoids unnecessary LLM calls. In a production environment processing thousands of cases, this has material cost implications.
+
+**Structured output with Pydantic validation** — Both agents return validated schema objects, not raw strings. This makes downstream processing reliable and testable without defensive parsing at every step.
+
+**Separation of reasoning and action** — CoT for risk classification, ReACT for narrative generation. The prompting strategy matches the task: open-ended pattern recognition vs. structured document production.
+
+**Append-only audit logging** — Every decision, including rejections and failures, is logged. Nothing is overwritten. This is a regulatory requirement, not an implementation detail.
