@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_af607b6e-f6a3-4dd8-a956-a812f9317947",
+    "filing_date": "2026-06-08T19:21:23.340173",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Jacqueline Rodriguez",
+    "customer_id": "CUST_0111",
+    "address": "49331 Lewis Views Apt. 516, Lake Maryshire, DE 59549",
+    "date_of_birth": "2001-02-01",
+    "occupation": "Conservation officer, historic buildings",
+    "phone": "498.427.0808x697",
+    "customer_since": "2022-02-27",
+    "risk_rating": "High"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0111_ACC_1",
+      "account_type": "Business_Checking",
+      "status": "Active",
+      "opening_date": "2024-04-30",
+      "current_balance": 41311.26
+    },
+    {
+      "account_id": "CUST_0111_ACC_2",
+      "account_type": "Checking",
+      "status": "Active",
+      "opening_date": "2022-06-13",
+      "current_balance": 92858.26
+    },
+    {
+      "account_id": "CUST_0111_ACC_3",
+      "account_type": "Savings",
+      "status": "Active",
+      "opening_date": "2024-07-31",
+      "current_balance": 2343.44
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Money_Laundering",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-05",
+    "activity_end_date": "2025-08-01",
+    "total_amount_involved": 386834.91,
+    "transaction_count": 121,
+    "narrative": "Jacqueline Rodriguez (CUST_0111), a high-risk customer, engaged in a pattern of suspicious transactions throughout 2025. Notably, large wire transfers were observed on 2025-07-29 ($76,517.25 credit), 2025-07-31 ($14,019.62 debit), 2025-07-30 ($8,906.70 and $12,689.70 debits), and 2025-07-31 ($13,901.49 debit). These transactions, coupled with a high volume of other transactions, suggest potential money laundering activity, warranting this SAR.",
+    "key_indicators": [
+      "High volume of transactions",
+      "Large wire transfers",
+      "High-risk customer"
+    ],
+    "ai_reasoning": "Step 1: High volume of transactions, high balances, high-risk customer. Step 2: Large wire transfers, high transaction frequency. Step 3: Matches money laundering typologies. Step 4: High risk due to large transactions, high-risk customer. Step 5: Classified as Money_Laundering due to patterns."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "BSA/AML Compliance Program Structures",
+      "FinCEN SAR Instructions"
+    ],
+    "narrative_word_count": 55,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "cb94986e-5772-4737-b9d9-0fcb8427e633",
+    "processing_date": "2026-06-08T19:21:23.340173",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}
