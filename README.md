@@ -35,7 +35,7 @@ The first agent receives a `CaseData` object and classifies the suspicious activ
 
 It uses **Chain-of-Thought prompting** — the model is instructed to reason step-by-step through the customer profile, transaction patterns, account behaviour, and regulatory indicators before committing to a classification. This makes the reasoning traceable and auditable, not just a label.
 
-Output is a validated `RiskAnalystOutput` containing the classification, a confidence score, risk level, key indicators, and the full reasoning chain.
+Output is a validated `RiskAnalystOutput` containing the classification, a confidence score, risk level (`Low`, `Medium`, `High`, or `Critical` — Critical is reserved for severe Sanctions violations and complex Money Laundering schemes), key indicators, and the full reasoning chain.
 
 ### Compliance Officer Agent — ReACT Framework
 
@@ -56,6 +56,8 @@ This is not just a UX choice. In a regulated environment, AI-generated complianc
 ## Audit Trail
 
 Every agent action — successful or failed — is logged by `ExplainabilityLogger` to an append-only JSONL file. Each entry captures the agent type, action, case ID, input summary, output summary, the agent's reasoning, execution time, and success status.
+
+Human reviewer decisions are also persisted to the same audit log via `log_human_decision()` — each approval or rejection is written with a UTC timestamp, case ID, the reviewer's input, and the AI classification and confidence that informed the decision. Nothing in the log is ever overwritten.
 
 This produces an audit trail that can be examined by regulators, surfaced in Log Analytics, or replayed to reconstruct any decision.
 
@@ -83,7 +85,8 @@ SAR_system/
 │   └── transactions.csv            # 4,268 transactions with suspicious patterns
 ├── outputs/
 │   ├── filed_sars/                 # Generated SAR JSON documents
-│   └── audit_logs/                 # JSONL decision audit trails
+│   ├── audit_logs/                 # JSONL decision audit trails (agents + human reviewer)
+│   └── workflow_metrics_report.json # Per-run performance report (timing, tokens, cost savings)
 └── assets/
     └── architecture.png            # System architecture diagram
 ```
@@ -171,7 +174,7 @@ The synthetic dataset continues through Phase 2 — the goal is validating the c
 
 ## Key Design Decisions
 
-**Two-stage processing** — Running the Compliance Officer only on approved cases avoids unnecessary LLM calls. In a production environment processing thousands of cases, this has material cost implications.
+**Two-stage processing** — Running the Compliance Officer only on approved cases avoids unnecessary LLM calls. Cost is computed from actual token usage returned by the API (`prompt_tokens / 1M × $30 + completion_tokens / 1M × $60` for GPT-4), and a durable JSON report is saved after every run with total tokens, per-stage timing, throughput, and the dollar savings from skipping Stage 2 on rejected cases.
 
 **Structured output with Pydantic validation** — Both agents return validated schema objects, not raw strings. This makes downstream processing reliable and testable without defensive parsing at every step.
 
