@@ -217,10 +217,26 @@ class RiskAnalystOutput(BaseModel):
 class ComplianceOfficerOutput(BaseModel):
     """Compliance Officer agent structured output"""
 
+    reasoning_phase: Optional[str] = Field(
+        None,
+        description="ReACT REASONING phase: classification review, regulatory requirements, citations, and narrative plan"
+    )
+    action_phase: Optional[str] = Field(
+        None,
+        description="ReACT ACTION phase: drafting decisions and verification steps taken"
+    )
     narrative: str = Field(..., max_length=1000, description="Regulatory narrative text (max 1000 chars for ≤200 words)")
     narrative_reasoning: str = Field(..., max_length=500, description="Reasoning for narrative construction (max 500 chars)")
     regulatory_citations: List[str] = Field(..., description="List of relevant regulations")
     completeness_check: bool = Field(..., description="Whether narrative meets all requirements")
+
+    @field_validator("reasoning_phase", "action_phase")
+    @classmethod
+    def validate_phase_content(cls, v: Optional[str]) -> Optional[str]:
+        """When present, ensure each ReACT phase field contains substantive content."""
+        if v is not None and not v.strip():
+            raise ValueError("ReACT phase field cannot be blank — provide substantive content or omit the field")
+        return v.strip() if v else v
 
 
 # ===== IMPLEMENT AUDIT LOGGING =====

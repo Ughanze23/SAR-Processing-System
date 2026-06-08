@@ -63,6 +63,8 @@ You MUST follow the ReACT framework for every narrative:
 
 **Output Format** — You MUST respond with ONLY valid JSON matching this exact structure (no additional text):
 {
+    "reasoning_phase": "1. Classification review: <what the risk analysis found>. 2. Regulatory requirements: <who/what/when/where/why elements needed>. 3. Citations identified: <relevant statutes>. 4. Narrative plan: <structure and focus>.",
+    "action_phase": "Drafted narrative focusing on <key elements>. Verified <specific SAR requirements> are present. Word count confirmed within 120-word limit.",
     "narrative": "<SAR narrative text, max 120 words, suitable for FinCEN submission>",
     "narrative_reasoning": "<brief explanation of narrative construction decisions, max 500 chars>",
     "regulatory_citations": ["<citation 1>", "<citation 2>"],
