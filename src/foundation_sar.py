@@ -27,7 +27,17 @@ class CustomerData(BaseModel):
     customer_id: str = Field(..., description="Unique identifier like 'CUST_0001'")
     name: str = Field(..., min_length=3, max_length=100, description="Full customer name like 'John Smith'")
     date_of_birth: date = Field(..., description="Date in YYYY-MM-DD format like '1985-03-15'")
-    ssn_last_4: str = Field(..., exclude=True,  min_length=4, max_length=4,description="Last 4 digits like '1234'")
+    ssn_last_4: str = Field(..., exclude=True, min_length=4, max_length=4, description="Last 4 digits like '1234'")
+
+    @field_validator("ssn_last_4", mode="before")
+    @classmethod
+    def coerce_ssn_to_str(cls, v) -> str:
+        """Coerce int/float SSN values loaded by pandas into zero-padded 4-char strings."""
+        if isinstance(v, float):
+            v = int(v)
+        if isinstance(v, int):
+            return str(v).zfill(4)
+        return str(v)
     address: str = Field(..., description="Full address like '123 Main St, City, ST 12345'")
     customer_since: date = Field(..., description="Date in YYYY-MM-DD format like '2010-01-  15'")
     risk_rating: Literal['Low', 'Medium', 'High'] = Field(..., description="Risk assessment — Low, Medium, or High")
@@ -123,6 +133,20 @@ class TransactionData(BaseModel):
     method: Literal['ATM', 'Electronic', 'Online', 'Branch', 'Mobile', 'Cash', 'Wire'] = Field(..., description="The Transaction method")
     counterparty: Optional[str] = Field(None, description="Other party in transaction")
     location: Optional[str] = Field(None, description="Transaction location or branch")
+
+    @field_validator("counterparty", "location", mode="before")
+    @classmethod
+    def coerce_nan_to_none(cls, v):
+        """Convert pandas NaN values to None before Pydantic type checking."""
+        if v is None:
+            return None
+        try:
+            import math
+            if isinstance(v, float) and math.isnan(v):
+                return None
+        except (TypeError, ValueError):
+            pass
+        return v if v != "" else None
 
     @field_validator("account_id")
     @classmethod
