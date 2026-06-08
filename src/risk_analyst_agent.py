@@ -188,25 +188,51 @@ class RiskAnalystAgent:
             # Step 3 — extract the text content from the response
             response_content = response.choices[0].message.content
 
-            # Step 4 — extract and parse the JSON
+            # Step 4 — extract and parse the JSON; retry once with a strict repair prompt on failure
             try:
                 json_str    = self._extract_json_from_response(response_content)
                 parsed_json = json.loads(json_str)
-            except (ValueError, json.JSONDecodeError) as parse_err:
-                execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
-                self.logger.log_agent_action(
-                    agent_type="RiskAnalyst",
-                    action="analyze_case",
-                    case_id=case_data.case_id,
-                    input_data={"customer_id": case_data.customer.customer_id},
-                    output_data={},
-                    reasoning="JSON parsing failed",
-                    execution_time_ms=execution_time_ms,
-                    success=False,
-                    error_message=str(parse_err)
+            except (ValueError, json.JSONDecodeError):
+                # --- Fallback: single retry with strict "return ONLY JSON" reprompt ---
+                repair_prompt = (
+                    f"Your previous response could not be parsed as JSON:\n\n"
+                    f"{response_content}\n\n"
+                    "Return ONLY the raw JSON object with no markdown, no explanation, "
+                    "and no extra text. Use exactly this structure:\n"
+                    '{"classification": "...", "confidence_score": 0.0, '
+                    '"reasoning": "Step 1: ... Step 2: ... Step 3: ... Step 4: ... Step 5: ...", '
+                    '"key_indicators": ["..."], "risk_level": "..."}'
                 )
-                _logged = True
-                raise ValueError("Failed to parse Risk Analyst JSON output") from parse_err
+                retry_response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system",    "content": self.system_prompt},
+                        {"role": "user",      "content": user_prompt},
+                        {"role": "assistant", "content": response_content},
+                        {"role": "user",      "content": repair_prompt},
+                    ],
+                    temperature=0.0,
+                    max_tokens=1000,
+                )
+                retry_content = retry_response.choices[0].message.content
+                try:
+                    json_str    = self._extract_json_from_response(retry_content)
+                    parsed_json = json.loads(json_str)
+                except (ValueError, json.JSONDecodeError) as parse_err:
+                    execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
+                    self.logger.log_agent_action(
+                        agent_type="RiskAnalyst",
+                        action="analyze_case",
+                        case_id=case_data.case_id,
+                        input_data={"customer_id": case_data.customer.customer_id},
+                        output_data={},
+                        reasoning="JSON parsing failed",
+                        execution_time_ms=execution_time_ms,
+                        success=False,
+                        error_message=str(parse_err)
+                    )
+                    _logged = True
+                    raise ValueError("Failed to parse Risk Analyst JSON output") from parse_err
 
             # Step 5 — validate with Pydantic
             output = RiskAnalystOutput.model_validate(parsed_json)
