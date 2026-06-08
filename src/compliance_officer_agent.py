@@ -41,9 +41,10 @@ class ComplianceOfficerAgent:
             explainability_logger: Logger for audit trails
             model: OpenAI model to use
         """
-        self.client = openai_client
-        self.logger = explainability_logger
-        self.model = model
+        self.client     = openai_client
+        self.logger     = explainability_logger
+        self.model      = model
+        self.last_usage = None   # populated after each generate_compliance_narrative call
 
         self.system_prompt = """You are a Senior Compliance Officer with 15 years of experience in BSA/AML regulatory reporting at a major financial institution. Your role is to generate precise, regulatory-compliant Suspicious Activity Report (SAR) narratives for FinCEN submission.
 
@@ -105,8 +106,10 @@ Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤1
                 max_tokens=800,
             )
 
-            # Step 3 — extract response text
-            response_content = response.choices[0].message.content
+            # Step 3 — extract response text and token usage
+            response_content  = response.choices[0].message.content
+            prompt_tokens     = response.usage.prompt_tokens
+            completion_tokens = response.usage.completion_tokens
 
             # Step 4 — parse JSON
             try:
@@ -158,7 +161,12 @@ Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤1
                     f"Narrative failed finalization validation — missing: {', '.join(issues)}"
                 )
 
-            # Step 7 — log success
+            # Step 7 — store token usage and log success
+            self.last_usage = {
+                "prompt_tokens":     prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens":      prompt_tokens + completion_tokens,
+            }
             execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
             self.logger.log_agent_action(
                 agent_type="ComplianceOfficer",
@@ -173,6 +181,8 @@ Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤1
                     "word_count":          word_count,
                     "completeness_check":  output.completeness_check,
                     "num_citations":       len(output.regulatory_citations),
+                    "prompt_tokens":       prompt_tokens,
+                    "completion_tokens":   completion_tokens,
                 },
                 reasoning=output.narrative_reasoning,
                 execution_time_ms=execution_time_ms,

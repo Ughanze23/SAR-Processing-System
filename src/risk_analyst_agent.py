@@ -100,9 +100,10 @@ class RiskAnalystAgent:
             explainability_logger: Logger for audit trails
             model: OpenAI model to use
         """
-        self.client = openai_client
-        self.logger = explainability_logger
-        self.model = model
+        self.client     = openai_client
+        self.logger     = explainability_logger
+        self.model      = model
+        self.last_usage = None   # populated after each analyze_case call
 
         framework  = create_chain_of_thought_framework()
         categories = get_classification_categories()
@@ -188,6 +189,8 @@ class RiskAnalystAgent:
 
             # Step 3 — extract the text content from the response
             response_content = response.choices[0].message.content
+            prompt_tokens     = response.usage.prompt_tokens
+            completion_tokens = response.usage.completion_tokens
 
             # Step 4 — extract and parse the JSON; retry once with a strict repair prompt on failure
             try:
@@ -215,7 +218,9 @@ class RiskAnalystAgent:
                     temperature=0.0,
                     max_tokens=1000,
                 )
-                retry_content = retry_response.choices[0].message.content
+                retry_content      = retry_response.choices[0].message.content
+                prompt_tokens     += retry_response.usage.prompt_tokens
+                completion_tokens += retry_response.usage.completion_tokens
                 try:
                     json_str    = self._extract_json_from_response(retry_content)
                     parsed_json = json.loads(json_str)
@@ -238,7 +243,12 @@ class RiskAnalystAgent:
             # Step 5 — validate with Pydantic
             output = RiskAnalystOutput.model_validate(parsed_json)
 
-            # Step 6 — log success
+            # Step 6 — store token usage and log success
+            self.last_usage = {
+                "prompt_tokens":     prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens":      prompt_tokens + completion_tokens,
+            }
             execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
 
             self.logger.log_agent_action(
@@ -251,9 +261,11 @@ class RiskAnalystAgent:
                     "num_accounts":     len(case_data.accounts)
                 },
                 output_data={
-                    "classification":   output.classification,
-                    "risk_level":       output.risk_level,
-                    "confidence_score": output.confidence_score
+                    "classification":    output.classification,
+                    "risk_level":        output.risk_level,
+                    "confidence_score":  output.confidence_score,
+                    "prompt_tokens":     prompt_tokens,
+                    "completion_tokens": completion_tokens,
                 },
                 reasoning=output.reasoning,
                 execution_time_ms=execution_time_ms,
