@@ -45,12 +45,12 @@ def create_vocareum_openai_client():
     
     # Configure client for Vocareum routing
     client = openai.OpenAI(
-        base_url="https://openai.vocareum.com/v1",
+        base_url="https://api.openai.com/v1",
         api_key=api_key
     )
     
     print("✅ OpenAI client initialized with Vocareum routing")
     print(f"🔑 API key: {api_key[:8]}...{api_key[-4:]}")
-    print("📍 Base URL: https://openai.vocareum.com/v1")
+    print("📍 Base URL: https://api.openai.com/v1")
     
     return client
