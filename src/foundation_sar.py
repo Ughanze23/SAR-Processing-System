@@ -212,7 +212,7 @@ class RiskAnalystOutput(BaseModel):
     confidence_score: float = Field(..., ge=0.0, le=1.0, description="Confidence level between 0.0 and 1.0")
     reasoning: str = Field(..., max_length=500, description="Detailed reasoning for risk assessment")
     key_indicators: List[str] = Field(..., description="List of key indicators that contributed to the risk assessment")
-    risk_level: Literal['Low', 'Medium', 'High'] = Field(..., description="Overall risk level assessment")
+    risk_level: Literal['Low', 'Medium', 'High', 'Critical'] = Field(..., description="Overall risk level assessment")
 
 class ComplianceOfficerOutput(BaseModel):
     """Compliance Officer agent structured output"""

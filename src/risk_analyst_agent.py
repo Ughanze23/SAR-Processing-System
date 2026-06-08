@@ -129,7 +129,8 @@ class RiskAnalystAgent:
                             - Customer's existing risk rating
                             - Transaction amounts relative to profile
                             - Frequency and recency of suspicious activity
-                            - Risk Level must be: Low, Medium, or High
+                            - Risk Level must be: Low, Medium, High, or Critical
+                            - Use Critical for severe Sanctions violations or complex Money_Laundering schemes with high-confidence indicators
                             
                             STEP 5. {framework['step_5']}: Select the most applicable classification from the categories below based on all evidence:
                             
@@ -146,7 +147,7 @@ class RiskAnalystAgent:
                             "confidence_score": <float between 0.0 and 1.0>,
                             "reasoning": "Step 1: <data review summary>. Step 2: <pattern finding>. Step 3: <regulatory mapping>. Step 4: <risk quantification>. Step 5: <classification decision>. (max 500 chars total)",
                             "key_indicators": ["<indicator 1>", "<indicator 2>", "<indicator 3>"],
-                            "risk_level": "<one of: Low, Medium, High>"
+                            "risk_level": "<one of: Low, Medium, High, Critical>"
                                 }}  """
 
     def analyze_case(self, case_data: CaseData) -> 'RiskAnalystOutput':  # Use quotes for forward reference
