@@ -51,6 +51,18 @@ The human review gate sits between the two agents deliberately. The Risk Analyst
 
 This is not just a UX choice. In a regulated environment, AI-generated compliance documents require human sign-off. The gate enforces that contractually, not just as a best practice.
 
+### Cost Savings Through Human Gating
+
+The placement of the human gate has a direct and measurable impact on API cost. The Compliance Officer (Stage 2) is the more expensive call — it receives a longer prompt (the full risk analysis plus transaction history), generates a structured 120-word narrative, and performs regulatory validation. Running it on every case, regardless of outcome, wastes spend on cases a reviewer would reject anyway.
+
+By requiring human approval before Stage 2 is invoked:
+
+- **Rejected cases cost only one API call** (the Stage 1 risk analysis), not two.
+- **The savings scale with rejection rate.** If a reviewer rejects 20% of cases, 20% of Stage 2 calls are eliminated. At higher alert volumes — thousands of cases per month — this compounds significantly.
+- **Cost is tracked from real token usage**, not estimates. After each run, `workflow_metrics_report.json` records the actual `prompt_tokens` and `completion_tokens` returned by the API for each stage, computes the dollar cost using the model's per-million-token pricing, and calculates what the same run would have cost if Stage 2 had been invoked on all cases. The difference is the measurable saving the gate produced.
+
+In the test runs on five cases with one rejection, the gate eliminated one Stage 2 call entirely. At scale, the same pattern applied to thousands of monthly cases produces material cost reduction — while simultaneously ensuring no SAR narrative is generated without explicit reviewer approval.
+
 ---
 
 ## Audit Trail
