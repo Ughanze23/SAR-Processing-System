@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_2adf3e1b-e2aa-4b67-b698-75b57dc460ae",
+    "filing_date": "2026-06-08T21:57:32.816175",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Patrick Williams",
+    "customer_id": "CUST_0118",
+    "address": "PSC 1449, Box 1476, APO AA 87103",
+    "date_of_birth": "1998-01-09",
+    "occupation": "Midwife",
+    "phone": "4726832684",
+    "customer_since": "2021-09-05",
+    "risk_rating": "Medium"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0118_ACC_1",
+      "account_type": "Checking",
+      "status": "Active",
+      "opening_date": "2022-12-27",
+      "current_balance": 88376.41
+    },
+    {
+      "account_id": "CUST_0118_ACC_2",
+      "account_type": "Money_Market",
+      "status": "Active",
+      "opening_date": "2025-01-30",
+      "current_balance": 39703.03
+    },
+    {
+      "account_id": "CUST_0118_ACC_3",
+      "account_type": "Business_Checking",
+      "status": "Closed",
+      "opening_date": "2025-01-18",
+      "current_balance": 44426.53
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Structuring",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-05",
+    "activity_end_date": "2025-08-04",
+    "total_amount_involved": 222070.26,
+    "transaction_count": 79,
+    "narrative": "Patrick Williams (CUST_0118), a medium-risk customer, exhibited a suspicious pattern of structuring. On 2025-08-02 and 2025-08-04, Williams made multiple same-day cash deposits and withdrawals at various branches, each transaction just below the $10,000 reporting threshold. This pattern, indicative of an attempt to evade BSA reporting requirements, warrants the submission of this SAR.",
+    "key_indicators": [
+      "Multiple same-day cash transactions",
+      "Transactions just below $10,000",
+      "High frequency of cash transactions"
+    ],
+    "ai_reasoning": "Step 1: Reviewed customer profile, account details, and transaction history. Step 2: Identified suspicious pattern of multiple cash deposits and withdrawals on the same day, just below the $10,000 reporting threshold. Step 3: Mapped this pattern to structuring prohibition (31 USC 5324). Step 4: Assessed risk as High due to the number of suspicious transactions and the customer's existing risk rating. Step 5: Classified as Structuring based on the evidence."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section X)",
+      "31 USC 5324"
+    ],
+    "narrative_word_count": 52,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "1060d36e-1228-4588-b2f3-7c946e171b58",
+    "processing_date": "2026-06-08T21:57:32.816175",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}

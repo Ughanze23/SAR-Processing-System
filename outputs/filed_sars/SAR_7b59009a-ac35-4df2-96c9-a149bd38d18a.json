@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_7b59009a-ac35-4df2-96c9-a149bd38d18a",
+    "filing_date": "2026-06-08T21:41:33.116681",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Patrick Williams",
+    "customer_id": "CUST_0118",
+    "address": "PSC 1449, Box 1476, APO AA 87103",
+    "date_of_birth": "1998-01-09",
+    "occupation": "Midwife",
+    "phone": "4726832684",
+    "customer_since": "2021-09-05",
+    "risk_rating": "Medium"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0118_ACC_1",
+      "account_type": "Checking",
+      "status": "Active",
+      "opening_date": "2022-12-27",
+      "current_balance": 88376.41
+    },
+    {
+      "account_id": "CUST_0118_ACC_2",
+      "account_type": "Money_Market",
+      "status": "Active",
+      "opening_date": "2025-01-30",
+      "current_balance": 39703.03
+    },
+    {
+      "account_id": "CUST_0118_ACC_3",
+      "account_type": "Business_Checking",
+      "status": "Closed",
+      "opening_date": "2025-01-18",
+      "current_balance": 44426.53
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Structuring",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-05",
+    "activity_end_date": "2025-08-04",
+    "total_amount_involved": 222070.26,
+    "transaction_count": 79,
+    "narrative": "Patrick Williams (ID: CUST_0118), a midwife with high account balances and transaction volumes, engaged in a pattern of large cash deposits and withdrawals in a short period in August 2025. This pattern, which included transactions such as a $7,212.80 cash deposit and a $7,762.48 ATM withdrawal on consecutive days, is indicative of structuring, a violation of 31 USC 5324.",
+    "key_indicators": [
+      "High account balances",
+      "High transaction volume",
+      "Multiple large cash transactions"
+    ],
+    "ai_reasoning": "Step 1: High account balances and transaction volumes for a midwife. Step 2: Multiple large cash deposits and withdrawals in a short period. Step 3: Matches structuring typology (31 USC 5324). Step 4: High risk due to high volume and pattern of cash transactions. Step 5: Classified as Structuring."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section X)",
+      "31 USC 5324"
+    ],
+    "narrative_word_count": 59,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "dc29fef1-e661-4cba-8c35-801fc5cf2481",
+    "processing_date": "2026-06-08T21:41:33.116681",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}

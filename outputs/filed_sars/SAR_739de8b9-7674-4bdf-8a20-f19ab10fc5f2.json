@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_739de8b9-7674-4bdf-8a20-f19ab10fc5f2",
+    "filing_date": "2026-06-08T21:47:03.036795",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Cindy Clayton",
+    "customer_id": "CUST_0057",
+    "address": "08330 Robert Stravenue, Garciaberg, AL 72636",
+    "date_of_birth": "1961-08-31",
+    "occupation": "Applications developer",
+    "phone": "(367)573-4540",
+    "customer_since": "2020-05-26",
+    "risk_rating": "High"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0057_ACC_1",
+      "account_type": "Checking",
+      "status": "Active",
+      "opening_date": "2023-11-18",
+      "current_balance": 30581.8
+    },
+    {
+      "account_id": "CUST_0057_ACC_2",
+      "account_type": "Money_Market",
+      "status": "Active",
+      "opening_date": "2021-06-14",
+      "current_balance": 61133.48
+    },
+    {
+      "account_id": "CUST_0057_ACC_3",
+      "account_type": "Business_Checking",
+      "status": "Active",
+      "opening_date": "2021-06-17",
+      "current_balance": 88286.77
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Money_Laundering",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-05",
+    "activity_end_date": "2025-08-02",
+    "total_amount_involved": 286342.62,
+    "transaction_count": 101,
+    "narrative": "Cindy Clayton (CUST_0057) engaged in a high volume of transactions inconsistent with her income from February to August 2025. Notably, she made large ATM withdrawals and deposits, including a series of transactions on July 31, 2025, and August 1, 2025, totaling over $29,000. These activities match money laundering typology and warrant reporting due to their volume and method.",
+    "key_indicators": [
+      "High volume of transactions",
+      "Large ATM withdrawals and deposits",
+      "High risk customer rating"
+    ],
+    "ai_reasoning": "Step 1: High volume of transactions inconsistent with income. Step 2: Multiple large ATM withdrawals and deposits. Step 3: Matches money laundering typology. Step 4: High risk due to volume and method. Step 5: Classified as Money Laundering."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section X)",
+      "31 CFR 1020.320"
+    ],
+    "narrative_word_count": 58,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "f68a20ed-3648-4ea2-802c-85f91cf20a4e",
+    "processing_date": "2026-06-08T21:47:03.036795",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}

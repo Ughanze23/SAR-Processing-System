@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_8c379c34-7b66-4db0-8140-f758f6964f53",
+    "filing_date": "2026-06-08T21:48:34.535677",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Patrick Williams",
+    "customer_id": "CUST_0118",
+    "address": "PSC 1449, Box 1476, APO AA 87103",
+    "date_of_birth": "1998-01-09",
+    "occupation": "Midwife",
+    "phone": "4726832684",
+    "customer_since": "2021-09-05",
+    "risk_rating": "Medium"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0118_ACC_1",
+      "account_type": "Checking",
+      "status": "Active",
+      "opening_date": "2022-12-27",
+      "current_balance": 88376.41
+    },
+    {
+      "account_id": "CUST_0118_ACC_2",
+      "account_type": "Money_Market",
+      "status": "Active",
+      "opening_date": "2025-01-30",
+      "current_balance": 39703.03
+    },
+    {
+      "account_id": "CUST_0118_ACC_3",
+      "account_type": "Business_Checking",
+      "status": "Closed",
+      "opening_date": "2025-01-18",
+      "current_balance": 44426.53
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Structuring",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-05",
+    "activity_end_date": "2025-08-04",
+    "total_amount_involved": 222070.26,
+    "transaction_count": 79,
+    "narrative": "Patrick Williams (ID: CUST_0118), a midwife with high account balances and transaction volumes, has been identified for potential structuring. Unusually large cash deposits and withdrawals were made on the same days, specifically on 2025-08-02 and 2025-08-04, with amounts ranging from $2,463.16 to $7,762.48. This pattern of activity, inconsistent with the customer's occupation, suggests an attempt to evade regulatory reporting requirements.",
+    "key_indicators": [
+      "High account balances",
+      "High transaction volumes",
+      "Multiple large cash deposits and withdrawals on same days"
+    ],
+    "ai_reasoning": "Step 1: High account balances and transaction volumes for a midwife. Step 2: Multiple large cash deposits and withdrawals on same days. Step 3: Matches structuring typology. Step 4: High risk due to multiple red flags. Step 5: Classified as Structuring."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section 5)",
+      "31 CFR 1020.320"
+    ],
+    "narrative_word_count": 60,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "e0399a51-5671-41c1-991b-a59d109ad4ce",
+    "processing_date": "2026-06-08T21:48:34.535677",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}
