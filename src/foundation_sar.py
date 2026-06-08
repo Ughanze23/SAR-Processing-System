@@ -134,6 +134,24 @@ class TransactionData(BaseModel):
     counterparty: Optional[str] = Field(None, description="Other party in transaction")
     location: Optional[str] = Field(None, description="Transaction location or branch")
 
+    @field_validator("transaction_date")
+    @classmethod
+    def validate_transaction_date(cls, v: date) -> date:
+        if v > date.today():
+            raise ValueError("transaction_date cannot be a future date")
+        if v.year < 1900:
+            raise ValueError("transaction_date is unreasonably old")
+        return v
+
+    @field_validator("amount")
+    @classmethod
+    def validate_amount(cls, v: float) -> float:
+        if v == 0:
+            raise ValueError("transaction amount cannot be zero")
+        if abs(v) > 1_000_000_000:
+            raise ValueError("transaction amount exceeds reasonable bounds (>$1B)")
+        return v
+
     @field_validator("counterparty", "location", mode="before")
     @classmethod
     def coerce_nan_to_none(cls, v):
