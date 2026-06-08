@@ -129,7 +129,7 @@ class RiskAnalystAgent:
                             - Customer's existing risk rating
                             - Transaction amounts relative to profile
                             - Frequency and recency of suspicious activity
-                            - Risk Level must be: Low, Medium, High, or Critical
+                            - Risk Level must be: Low, Medium, or High
                             
                             STEP 5. {framework['step_5']}: Select the most applicable classification from the categories below based on all evidence:
                             
