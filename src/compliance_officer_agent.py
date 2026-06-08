@@ -147,14 +147,18 @@ Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤1
             if not output.regulatory_citations:
                 raise ValueError("Narrative has no regulatory citations — at least one citation is required")
 
-            # Run element and citation quality checks
+            # Run element, citation quality, and professionalism checks
             compliance_result = self._validate_narrative_compliance(
-                output.narrative, output.regulatory_citations
+                output.narrative, output.regulatory_citations, risk_analysis.classification
             )
             if not compliance_result["is_compliant"]:
-                issues = compliance_result["missing_elements"] + compliance_result["missing_citations"]
+                issues = (
+                    compliance_result["missing_elements"]
+                    + compliance_result["missing_citations"]
+                    + [f"informal language: '{p}'" for p in compliance_result["informal_found"]]
+                )
                 raise ValueError(
-                    f"Narrative failed finalization validation — missing: {', '.join(issues)}"
+                    f"Narrative failed finalization validation — issues: {', '.join(issues)}"
                 )
 
             # Step 7 — log success
@@ -245,48 +249,84 @@ Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤1
             result += line + "\n"
         return result
 
-    def _validate_narrative_compliance(self, narrative: str, citations: List[str]) -> Dict[str, Any]:
+    # Typology → expected citation keywords (Note 2)
+    _TYPOLOGY_CITATION_MAP = {
+        "Structuring":      ["5324", "structuring", "ctr"],
+        "Money_Laundering": ["1956", "1957", "money laundering", "proceeds"],
+        "Fraud":            ["1344", "1343", "fraud", "wire fraud"],
+        "Sanctions":        ["ofac", "executive order", "sanctions", "50 usc"],
+        "Other":            [],  # no specific requirement
+    }
+
+    # Informal / unprofessional language patterns (Note 3)
+    _INFORMAL_PATTERNS = [
+        r"\bI think\b", r"\bI believe\b", r"\bI feel\b",
+        r"\bwe think\b", r"\bwe believe\b",
+        r"\bmaybe\b", r"\bperhaps\b",
+        r"\bit seems like\b", r"\bit looks like\b",
+        r"\bdon't\b", r"\bcan't\b", r"\bwon't\b", r"\bisn't\b",
+        r"\bwasn't\b", r"\bthey're\b", r"\bit's\b", r"\bthat's\b",
+        r"\bNote:\b", r"\bPlease note\b", r"\bFYI\b",
+        r"!{2,}",   # multiple exclamation marks
+    ]
+
+    def _validate_narrative_compliance(
+        self, narrative: str, citations: List[str], classification: str = "Other"
+    ) -> Dict[str, Any]:
         """
         Validate narrative meets regulatory SAR requirements.
 
-        Checks:
-        - Subject identification (customer name/ID present)
-        - Activity typology (suspicious activity type described)
-        - Timeframe indicator (temporal reference present)
-        - Amounts (dollar figures present)
-        - Citation quality: at least one FinCEN SAR Instructions reference
-          and at least one BSA/AML statute (only enforced for substantive
-          narratives >15 words, to allow test stubs through)
+        Checks (all enforced only for substantive narratives >15 words):
+        - Subject identification, activity typology, timeframe, amounts
+        - FinCEN SAR Instructions reference + BSA/AML statute present
+        - At least one citation aligned to the case typology (Note 2)
+        - No informal/unprofessional language (Note 3)
         """
         import re
-        word_count  = len(narrative.split())
-        lower       = narrative.lower()
+        word_count = len(narrative.split())
+        lower      = narrative.lower()
 
-        # All checks are only enforced for substantive narratives (>15 words)
-        # Short narratives (e.g. test stubs) bypass element and citation validation
         if word_count > 15:
+            # --- Element checks ---
             elements_present = {
                 "subject_identification": any(kw in lower for kw in ["customer", "account holder", "subject"]),
                 "activity_typology":      any(kw in lower for kw in [
                     "structur", "fraud", "launder", "sanction", "suspicious", "illicit", "typology"
                 ]),
-                "timeframe":              bool(re.search(
+                "timeframe": bool(re.search(
                     r"\b(\d{4}[-/]\d{2}[-/]\d{2}|january|february|march|april|may|june|july|"
                     r"august|september|october|november|december|\d+ day|\d+ week|\d+ month|consecutive|period)\b",
                     lower
                 )),
-                "amounts":                bool(re.search(r"\$[\d,]+|\b\d[\d,]*\.\d{2}\b", narrative)),
+                "amounts": bool(re.search(r"\$[\d,]+|\b\d[\d,]*\.\d{2}\b", narrative)),
             }
+
+            # --- Citation quality checks (Note 2) ---
+            citations_lower = [c.lower() for c in citations]
             fincen_keywords  = ["fincen", "financial crimes enforcement", "sar instructions"]
             bsa_aml_keywords = ["31 usc", "31 cfr", "bsa", "bank secrecy act", "anti-money laundering", "aml"]
-            citations_lower  = [c.lower() for c in citations]
             has_fincen_cite  = any(kw in c for c in citations_lower for kw in fincen_keywords)
             has_bsa_cite     = any(kw in c for c in citations_lower for kw in bsa_aml_keywords)
+
+            # Typology alignment: at least one citation must reference the expected statute/keyword
+            typology_keywords   = self._TYPOLOGY_CITATION_MAP.get(classification, [])
+            has_typology_cite   = (
+                not typology_keywords or   # "Other" has no requirement
+                any(kw in c for c in citations_lower for kw in typology_keywords)
+            )
+
+            # --- Professionalism checks (Note 3) ---
+            informal_found = [
+                pat for pat in self._INFORMAL_PATTERNS
+                if re.search(pat, narrative, re.IGNORECASE)
+            ]
         else:
             # Stub / test narrative — skip all content checks
-            elements_present = {}
-            has_fincen_cite  = True
-            has_bsa_cite     = True
+            elements_present  = {}
+            has_fincen_cite   = True
+            has_bsa_cite      = True
+            has_typology_cite = True
+            informal_found    = []
 
         missing_elements  = [k for k, v in elements_present.items() if not v]
         missing_citations = []
@@ -294,14 +334,21 @@ Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤1
             missing_citations.append("FinCEN SAR Instructions reference")
         if not has_bsa_cite:
             missing_citations.append("BSA/AML statute (31 USC / 31 CFR / BSA)")
+        if not has_typology_cite:
+            missing_citations.append(f"typology-aligned citation for {classification}")
 
-        is_compliant = len(missing_elements) == 0 and len(missing_citations) == 0
+        is_compliant = (
+            len(missing_elements) == 0
+            and len(missing_citations) == 0
+            and len(informal_found) == 0
+        )
 
         return {
             "word_count":        word_count,
             "elements_present":  elements_present,
             "missing_elements":  missing_elements,
             "missing_citations": missing_citations,
+            "informal_found":    informal_found,
             "is_compliant":      is_compliant,
         }
 
