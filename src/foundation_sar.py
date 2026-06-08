@@ -320,6 +320,24 @@ class DataLoader:
                 for txn in customer_transactions_raw
             ]
 
+            if not transactions:
+                execution_time_ms = (datetime.now() - start_time).total_seconds() * 1000
+                self.logger.log_agent_action(
+                    agent_type="DataLoader",
+                    action="create_case_from_data",
+                    case_id=case_id,
+                    input_data={"customer_id": customer.customer_id},
+                    output_data={},
+                    reasoning="No transactions found for customer — cannot create SAR case",
+                    execution_time_ms=execution_time_ms,
+                    success=False,
+                    error_message="No matching transactions found"
+                )
+                raise ValueError(
+                    f"No transactions found for customer '{customer.customer_id}' "
+                    "— cannot create a SAR case without transaction data"
+                )
+
             
             case = CaseData(
                 case_id=case_id,
@@ -384,15 +402,24 @@ class DataLoader:
 # ===== HELPER FUNCTIONS (PROVIDED) =====
 
 def load_csv_data(data_dir: str = "data/") -> tuple:
-    """Helper function to load all CSV files
-    
+    """Helper function to load all CSV files with dtype coercion and NaN handling.
+
     Returns:
         tuple: (customers_df, accounts_df, transactions_df)
     """
     try:
-        customers_df = pd.read_csv(f"{data_dir}/customers.csv")
-        accounts_df = pd.read_csv(f"{data_dir}/accounts.csv") 
+        customers_df = pd.read_csv(
+            f"{data_dir}/customers.csv",
+            dtype={"ssn_last_4": str}
+        )
+        customers_df["phone"] = customers_df["phone"].fillna("")
+
+        accounts_df = pd.read_csv(f"{data_dir}/accounts.csv")
+
         transactions_df = pd.read_csv(f"{data_dir}/transactions.csv")
+        transactions_df["counterparty"] = transactions_df["counterparty"].fillna("")
+        transactions_df["location"] = transactions_df["location"].fillna("")
+
         return customers_df, accounts_df, transactions_df
     except FileNotFoundError as e:
         raise FileNotFoundError(f"CSV file not found: {e}")
