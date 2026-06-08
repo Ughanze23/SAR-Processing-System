@@ -63,6 +63,27 @@ By requiring human approval before Stage 2 is invoked:
 
 In the test runs on five cases with one rejection, the gate eliminated one Stage 2 call entirely. At scale, the same pattern applied to thousands of monthly cases produces material cost reduction — while simultaneously ensuring no SAR narrative is generated without explicit reviewer approval.
 
+### Cost Projections at Scale (1,000 cases/month)
+
+Based on actual token usage from live API calls (GPT-4, $30/M input · $60/M output):
+
+| | Cost |
+|---|---|
+| Stage 1 per case (risk analysis) | ~$0.138 |
+| Stage 2 per case (compliance narrative) | ~$0.106 |
+
+**At 20% rejection rate** (200 cases skipped, 800 proceed to Stage 2):
+
+| | Monthly Cost |
+|---|---|
+| Stage 1 × 1,000 | $138.29 |
+| Stage 2 × 800 | $84.86 |
+| **Two-stage total** | **$223.15** |
+| Single-stage (no gate) | $244.36 |
+| **Monthly saving** | **~$21** |
+
+At 50% rejection the saving grows to ~$53/month. The gate pays off proportionally to how aggressively reviewers filter — and every rejected case also avoids generating a compliance narrative that would never be filed.
+
 ---
 
 ## Audit Trail
