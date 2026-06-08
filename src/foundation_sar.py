@@ -279,6 +279,31 @@ class ExplainabilityLogger:
         with open(self.log_file, 'a') as f:
             f.write(json.dumps(entry) + '\n')
 
+    def log_human_decision(self,
+                           case_id: str,
+                           customer_name: str,
+                           decision: str,
+                           ai_classification: str,
+                           ai_confidence: float,
+                           ai_risk_level: str,
+                           rationale: str = "Human reviewer decision"):
+        """Log a human reviewer approval or rejection to the append-only audit trail."""
+        entry = {
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'case_id': case_id,
+            'agent_type': 'HumanReviewer',
+            'action': 'sar_filing_decision',
+            'customer_name': customer_name,
+            'decision': decision,
+            'ai_classification': ai_classification,
+            'ai_confidence': ai_confidence,
+            'ai_risk_level': ai_risk_level,
+            'rationale': rationale,
+        }
+        self.entries.append(entry)
+        with open(self.log_file, 'a') as f:
+            f.write(json.dumps(entry) + '\n')
+
 
 # ===== TODO: IMPLEMENT DATA LOADER =====
 
