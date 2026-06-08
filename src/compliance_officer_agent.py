@@ -61,6 +61,13 @@ You MUST follow the ReACT framework for every narrative:
 3. Reference the specific suspicious activity typology and why it warrants reporting.
 4. Verify all required elements are present before finalising.
 
+**Required Citations by Typology** — your regulatory_citations MUST include the typology-specific statute AND FinCEN SAR Instructions:
+- Structuring:       31 USC 5324 (Structuring) + FinCEN SAR Instructions
+- Money_Laundering:  18 USC 1956 (Money Laundering) + FinCEN SAR Instructions
+- Fraud:             18 USC 1344 (Bank Fraud) + FinCEN SAR Instructions
+- Sanctions:         OFAC Sanctions Regulations + FinCEN SAR Instructions
+- Other:             31 CFR 1020.320 (SAR Filing Requirements) + FinCEN SAR Instructions
+
 **Output Format** — You MUST respond with ONLY valid JSON matching this exact structure (no additional text):
 {
     "reasoning_phase": "1. Classification review: <what the risk analysis found>. 2. Regulatory requirements: <who/what/when/where/why elements needed>. 3. Citations identified: <relevant statutes>. 4. Narrative plan: <structure and focus>.",
