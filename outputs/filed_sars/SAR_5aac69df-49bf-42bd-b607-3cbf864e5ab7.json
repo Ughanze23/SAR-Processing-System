@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_5aac69df-49bf-42bd-b607-3cbf864e5ab7",
+    "filing_date": "2026-06-08T21:25:42.155181",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Tracy Lewis",
+    "customer_id": "CUST_0053",
+    "address": "8016 Nicole Stream Suite 650, Williamsside, ID 48017",
+    "date_of_birth": "1966-10-26",
+    "occupation": "Nurse, mental health",
+    "phone": "+1-341-468-7849",
+    "customer_since": "2024-05-11",
+    "risk_rating": "Medium"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0053_ACC_1",
+      "account_type": "Money_Market",
+      "status": "Active",
+      "opening_date": "2024-07-23",
+      "current_balance": 17676.35
+    },
+    {
+      "account_id": "CUST_0053_ACC_2",
+      "account_type": "Savings",
+      "status": "Active",
+      "opening_date": "2024-08-20",
+      "current_balance": 62101.19
+    },
+    {
+      "account_id": "CUST_0053_ACC_3",
+      "account_type": "Business_Checking",
+      "status": "Active",
+      "opening_date": "2024-11-10",
+      "current_balance": 90679.35
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Structuring",
+    "risk_level": "High",
+    "confidence_score": 0.95,
+    "activity_start_date": "2025-02-06",
+    "activity_end_date": "2025-07-31",
+    "total_amount_involved": 274025.18,
+    "transaction_count": 94,
+    "narrative": "Tracy Lewis (CUST_0053), a mental health nurse, made multiple cash deposits just under the $10,000 reporting threshold at various branches in July 2025. These transactions, inconsistent with her occupation, suggest a pattern of structuring to evade reporting requirements. This activity warrants reporting under 31 USC 5324.",
+    "key_indicators": [
+      "Multiple transactions just under $10,000",
+      "High frequency of large cash deposits",
+      "Deposits inconsistent with stated occupation"
+    ],
+    "ai_reasoning": "Step 1: Customer is a mental health nurse with medium risk rating. Step 2: Multiple cash deposits just under $10,000 threshold. Step 3: Matches structuring typology (31 USC 5324). Step 4: High risk due to frequency and amounts of suspicious transactions. Step 5: Classified as Structuring."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section 2)",
+      "31 USC 5324"
+    ],
+    "narrative_word_count": 46,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "fc65b0b3-0dd0-4cd7-bb9e-a8f4493021cc",
+    "processing_date": "2026-06-08T21:25:42.155181",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}

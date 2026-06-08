@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_2fc418df-6b88-41a0-982d-0d2bc99c6309",
+    "filing_date": "2026-06-08T21:23:59.738654",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Jacqueline Rodriguez",
+    "customer_id": "CUST_0111",
+    "address": "49331 Lewis Views Apt. 516, Lake Maryshire, DE 59549",
+    "date_of_birth": "2001-02-01",
+    "occupation": "Conservation officer, historic buildings",
+    "phone": "498.427.0808x697",
+    "customer_since": "2022-02-27",
+    "risk_rating": "High"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0111_ACC_1",
+      "account_type": "Business_Checking",
+      "status": "Active",
+      "opening_date": "2024-04-30",
+      "current_balance": 41311.26
+    },
+    {
+      "account_id": "CUST_0111_ACC_2",
+      "account_type": "Checking",
+      "status": "Active",
+      "opening_date": "2022-06-13",
+      "current_balance": 92858.26
+    },
+    {
+      "account_id": "CUST_0111_ACC_3",
+      "account_type": "Savings",
+      "status": "Active",
+      "opening_date": "2024-07-31",
+      "current_balance": 2343.44
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Money_Laundering",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-05",
+    "activity_end_date": "2025-08-01",
+    "total_amount_involved": 386834.91,
+    "transaction_count": 121,
+    "narrative": "Jacqueline Rodriguez (ID: CUST_0111), a high-risk customer, exhibited suspicious activity consistent with money laundering. Over a period of six months in 2025, she conducted an unusually high volume of transactions across various methods. Notably, in July, she received a large wire transfer credit of $76,517.25, followed by multiple large wire transfer debits totaling $49,517.51. This pattern of receiving and rapidly disbursing funds raises suspicion of money laundering.",
+    "key_indicators": [
+      "High-risk methods",
+      "Unusual volume",
+      "High-risk customer"
+    ],
+    "ai_reasoning": "Step 1: Reviewed Jacqueline Rodriguez's profile, account details, and transaction history. Step 2: Identified unusual volume of transactions and high-risk methods (multiple wire transfers). Step 3: Mapped patterns to BSA/AML regulations. Step 4: Assessed risk as High due to multiple red flags and high-risk rating. Step 5: Classified as Money Laundering due to complex transaction patterns."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section X)",
+      "31 CFR 1020.320"
+    ],
+    "narrative_word_count": 67,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "a341d6e5-1671-4a04-8d03-b47726a422d5",
+    "processing_date": "2026-06-08T21:23:59.738654",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}
