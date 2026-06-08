@@ -144,7 +144,7 @@ class RiskAnalystAgent:
                             {{
                             "classification": "<one of: Structuring, Sanctions, Fraud, Money_Laundering, Other>",
                             "confidence_score": <float between 0.0 and 1.0>,
-                            "reasoning": "<detailed step-by-step reasoning through all 5 analysis steps, max 500 chars>",
+                            "reasoning": "Step 1: <data review summary>. Step 2: <pattern finding>. Step 3: <regulatory mapping>. Step 4: <risk quantification>. Step 5: <classification decision>. (max 500 chars total)",
                             "key_indicators": ["<indicator 1>", "<indicator 2>", "<indicator 3>"],
                             "risk_level": "<one of: Low, Medium, High>"
                                 }}  """
