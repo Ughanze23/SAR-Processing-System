@@ -1,105 +1,62 @@
 {
-  "report_timestamp": "2026-06-08T21:57:51.000224",
+  "report_timestamp": "2026-06-09T18:07:36.004260",
   "volume": {
-    "total_cases": 5,
-    "approved": 1,
-    "rejected": 4,
-    "approval_rate": 0.2,
-    "rejection_rate": 0.8,
-    "stage2_calls_avoided": 4
+    "total_cases": 3,
+    "approved": 0,
+    "rejected": 2,
+    "approval_rate": 0.0,
+    "rejection_rate": 0.6667,
+    "stage2_calls_avoided": 2
   },
   "timing_seconds": {
-    "end_to_end_wall_time": 98.05,
-    "total_ai_time": 85.29,
-    "total_stage1": 67.14,
-    "total_stage2": 18.15,
-    "avg_stage1_per_case": 13.43,
-    "avg_stage2_per_case": 18.15
+    "end_to_end_wall_time": 104.34,
+    "total_ai_time": 41.13,
+    "total_stage1": 41.13,
+    "total_stage2": 0.0,
+    "avg_stage1_per_case": 20.56,
+    "avg_stage2_per_case": 0
   },
   "token_usage": {
-    "total_prompt_tokens": 24675,
-    "total_completion_tokens": 954,
-    "total_tokens": 25629
+    "total_prompt_tokens": 9309,
+    "total_completion_tokens": 267,
+    "total_tokens": 9576
   },
   "cost_usd": {
     "pricing_model": "$30.0/M input, $60.0/M output",
-    "two_stage_actual": 0.79749,
-    "single_stage_estimate": 1.22181,
-    "estimated_savings": 0.42432,
-    "savings_pct": 34.73
+    "two_stage_actual": 0.29529,
+    "single_stage_estimate": 0.29529,
+    "estimated_savings": 0.0,
+    "savings_pct": 0.0
   },
   "throughput": {
-    "cases_per_minute_ai_time": 3.52
+    "cases_per_minute_ai_time": 4.38
   },
   "per_case_detail": [
     {
-      "case_id": "ded5077b-dd00-4e78-af00-156d920d3569",
+      "case_id": "659f2a92-94c0-4150-b97f-37d1b9d28ca1",
       "customer_name": "Jacqueline Rodriguez",
       "decision": "REJECT",
-      "stage1_time_ms": 3813.2,
+      "stage1_time_ms": 23758.7,
       "stage2_time_ms": null,
       "stage1_tokens": {
         "prompt_tokens": 5056,
-        "completion_tokens": 114,
-        "total_tokens": 5170
+        "completion_tokens": 141,
+        "total_tokens": 5197
       },
       "stage2_tokens": {}
     },
     {
-      "case_id": "5603d467-2280-4063-96a8-9b20fa723819",
+      "case_id": "a053f995-6fe6-420b-b9ff-250376a0185e",
       "customer_name": "Michael Stanley",
       "decision": "REJECT",
-      "stage1_time_ms": 3784.7,
+      "stage1_time_ms": 17367.1,
       "stage2_time_ms": null,
       "stage1_tokens": {
         "prompt_tokens": 4253,
-        "completion_tokens": 111,
-        "total_tokens": 4364
+        "completion_tokens": 126,
+        "total_tokens": 4379
       },
       "stage2_tokens": {}
-    },
-    {
-      "case_id": "aeb8e7ad-5a44-40c4-a11a-cacf53a2efb1",
-      "customer_name": "Cindy Clayton",
-      "decision": "REJECT",
-      "stage1_time_ms": 11636.3,
-      "stage2_time_ms": null,
-      "stage1_tokens": {
-        "prompt_tokens": 4397,
-        "completion_tokens": 123,
-        "total_tokens": 4520
-      },
-      "stage2_tokens": {}
-    },
-    {
-      "case_id": "915c2681-087d-42cb-89a5-5a69270df2d4",
-      "customer_name": "Tracy Lewis",
-      "decision": "REJECT",
-      "stage1_time_ms": 25362.2,
-      "stage2_time_ms": null,
-      "stage1_tokens": {
-        "prompt_tokens": 4216,
-        "completion_tokens": 141,
-        "total_tokens": 4357
-      },
-      "stage2_tokens": {}
-    },
-    {
-      "case_id": "1060d36e-1228-4588-b2f3-7c946e171b58",
-      "customer_name": "Patrick Williams",
-      "decision": "PROCEED",
-      "stage1_time_ms": 22541.2,
-      "stage2_time_ms": 18152.9,
-      "stage1_tokens": {
-        "prompt_tokens": 3833,
-        "completion_tokens": 157,
-        "total_tokens": 3990
-      },
-      "stage2_tokens": {
-        "prompt_tokens": 2920,
-        "completion_tokens": 308,
-        "total_tokens": 3228
-      }
     }
   ]
 }

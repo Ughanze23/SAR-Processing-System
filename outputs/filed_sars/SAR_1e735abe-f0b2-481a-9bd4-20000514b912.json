@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_1e735abe-f0b2-481a-9bd4-20000514b912",
+    "filing_date": "2026-06-09T18:08:30.547692",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Jacqueline Rodriguez",
+    "customer_id": "CUST_0111",
+    "address": "49331 Lewis Views Apt. 516, Lake Maryshire, DE 59549",
+    "date_of_birth": "2001-02-01",
+    "occupation": "Conservation officer, historic buildings",
+    "phone": "498.427.0808x697",
+    "customer_since": "2022-02-27",
+    "risk_rating": "High"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0111_ACC_1",
+      "account_type": "Business_Checking",
+      "status": "Active",
+      "opening_date": "2024-04-30",
+      "current_balance": 41311.26
+    },
+    {
+      "account_id": "CUST_0111_ACC_2",
+      "account_type": "Checking",
+      "status": "Active",
+      "opening_date": "2022-06-13",
+      "current_balance": 92858.26
+    },
+    {
+      "account_id": "CUST_0111_ACC_3",
+      "account_type": "Savings",
+      "status": "Active",
+      "opening_date": "2024-07-31",
+      "current_balance": 2343.44
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Money_Laundering",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-05",
+    "activity_end_date": "2025-08-01",
+    "total_amount_involved": 386834.91,
+    "transaction_count": 121,
+    "narrative": "Jacqueline Rodriguez (CUST_0111), a high-risk customer, conducted numerous transactions inconsistent with her occupation. Notably, multiple large wire transfers were detected, including an incoming wire transfer of $76,517.25 on 2025-07-29, followed by several outgoing wire transfers totaling $49,517.51 between 2025-07-30 and 2025-07-31. These activities align with money laundering typologies, warranting this report.",
+    "key_indicators": [
+      "High transaction volume",
+      "Large wire transfers",
+      "High-risk customer rating"
+    ],
+    "ai_reasoning": "Step 1: High volume of transactions and balances inconsistent with occupation. Step 2: Multiple large wire transfers detected. Step 3: Patterns align with money laundering typologies. Step 4: High risk due to customer's rating and transaction amounts. Step 5: Classified as potential money laundering."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section X)",
+      "31 CFR 1020.320"
+    ],
+    "narrative_word_count": 51,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "8c917b41-5e36-45da-87cf-6076cd42ac74",
+    "processing_date": "2026-06-09T18:08:30.547692",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}

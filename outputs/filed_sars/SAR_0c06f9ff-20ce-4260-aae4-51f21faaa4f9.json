@@ -1,0 +1,83 @@
+{
+  "sar_metadata": {
+    "sar_id": "SAR_0c06f9ff-20ce-4260-aae4-51f21faaa4f9",
+    "filing_date": "2026-06-09T18:09:17.653373",
+    "filing_type": "Suspicious Activity Report",
+    "ai_generated": true,
+    "review_status": "human_approved"
+  },
+  "filing_institution": {
+    "name": "First National Synthetic Bank",
+    "address": "100 Compliance Ave, Washington, DC 20001",
+    "ein": "12-3456789",
+    "contact_name": "SAR Processing Team",
+    "contact_phone": "202-555-0100"
+  },
+  "subject_information": {
+    "customer_name": "Michael Stanley",
+    "customer_id": "CUST_0062",
+    "address": "230 Tiffany Mountain Suite 863, South Michael, KY 25205",
+    "date_of_birth": "1978-07-24",
+    "occupation": "Operational investment banker",
+    "phone": "001-210-569-0331x1907",
+    "customer_since": "2022-04-01",
+    "risk_rating": "Medium"
+  },
+  "account_information": [
+    {
+      "account_id": "CUST_0062_ACC_1",
+      "account_type": "Money_Market",
+      "status": "Active",
+      "opening_date": "2024-07-17",
+      "current_balance": 22525.23
+    },
+    {
+      "account_id": "CUST_0062_ACC_2",
+      "account_type": "Savings",
+      "status": "Closed",
+      "opening_date": "2025-02-20",
+      "current_balance": 93306.69
+    },
+    {
+      "account_id": "CUST_0062_ACC_3",
+      "account_type": "Money_Market",
+      "status": "Active",
+      "opening_date": "2025-03-17",
+      "current_balance": 86776.03
+    }
+  ],
+  "suspicious_activity": {
+    "classification": "Money_Laundering",
+    "risk_level": "High",
+    "confidence_score": 0.85,
+    "activity_start_date": "2025-02-03",
+    "activity_end_date": "2025-08-01",
+    "total_amount_involved": 380633.78,
+    "transaction_count": 90,
+    "narrative": "Michael Stanley (ID: CUST_0062) exhibited suspicious activity consistent with money laundering. High transaction volumes and large balances were observed in his account. Notably, on 2025-07-27, an incoming wire transfer of $98,090.16 was credited to his account. Subsequently, four large outgoing wire transfers totaling $71,181.08 were recorded between 2025-07-28 and 2025-07-29. This pattern of activity, involving large, rapid movements of funds, is indicative of potential money laundering.",
+    "key_indicators": [
+      "High transaction volume",
+      "Frequent wire transfers",
+      "Large account balances"
+    ],
+    "ai_reasoning": "Step 1: High volume of transactions and large balances in accounts. Step 2: Unusual volume and high-risk methods (wire transfers). Step 3: Matches SAR filing requirements (31 CFR 1020.320). Step 4: High risk due to large transaction amounts and frequency of suspicious activity. Step 5: Classified as Money Laundering due to high volume and suspicious wire transfers."
+  },
+  "regulatory_compliance": {
+    "citations": [
+      "FinCEN SAR Instructions (Section X)",
+      "31 CFR 1020.320"
+    ],
+    "narrative_word_count": 66,
+    "completeness_check": true,
+    "compliance_status": "approved"
+  },
+  "audit_trail": {
+    "case_id": "2f8c87dd-1807-4ba6-8bfc-60c7690ee3ed",
+    "processing_date": "2026-06-09T18:09:17.653373",
+    "ai_agents_used": [
+      "RiskAnalyst",
+      "ComplianceOfficer"
+    ],
+    "human_reviewer": "compliance_officer"
+  }
+}
