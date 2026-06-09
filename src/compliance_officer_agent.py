@@ -104,6 +104,7 @@ Remember: respond with ONLY valid JSON — no extra text. Narrative must be ≤1
                 ],
                 temperature=0.2,
                 max_tokens=800,
+                response_format={"type": "json_object"},
             )
 
             # Step 3 — extract response text and token usage

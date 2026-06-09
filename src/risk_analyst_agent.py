@@ -185,6 +185,7 @@ class RiskAnalystAgent:
                 ],
                 temperature=0.3,
                 max_tokens=1000,
+                response_format={"type": "json_object"},
             )
 
             # Step 3 — extract the text content from the response
@@ -217,6 +218,7 @@ class RiskAnalystAgent:
                     ],
                     temperature=0.0,
                     max_tokens=1000,
+                    response_format={"type": "json_object"},
                 )
                 retry_content      = retry_response.choices[0].message.content
                 prompt_tokens     += retry_response.usage.prompt_tokens
